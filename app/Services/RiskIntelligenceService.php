@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Country;
 use App\Models\Port;
 use App\Models\RiskScore;
-use App\Models\Article;
+use App\Models\NewsCache;
 use App\Models\PositiveWord;
 use App\Models\NegativeWord;
 use Illuminate\Support\Facades\Cache;
@@ -107,7 +107,7 @@ class RiskIntelligenceService
         $totalArticlesCount = count($articles);
 
         // Delete old cached articles for this country in DB
-        Article::where('country_code', $code)->delete();
+        NewsCache::where('country_code', $code)->delete();
 
         foreach ($articles as $art) {
             $textToAnalyze = strtolower(($art['title'] ?? '') . ' ' . ($art['description'] ?? ''));
@@ -139,7 +139,7 @@ class RiskIntelligenceService
             }
 
             // Save to DB
-            $dbArticle = Article::create([
+            $dbArticle = NewsCache::create([
                 'country_code' => $code,
                 'title' => substr($art['title'] ?? '', 0, 490),
                 'description' => $art['description'] ?? '',

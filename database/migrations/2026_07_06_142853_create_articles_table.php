@@ -13,14 +13,10 @@ return new class extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
-            $table->string('country_code', 3)->index();
-            $table->string('title', 500);
-            $table->text('description')->nullable();
-            $table->text('url');
-            $table->string('source_name')->nullable();
-            $table->timestamp('published_at')->nullable();
-            $table->string('sentiment')->default('Neutral'); // Positive, Negative, Neutral
-            $table->integer('sentiment_score')->default(0);
+            $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
+            $table->string('country_code', 3)->nullable()->index();
+            $table->string('title', 255);
+            $table->text('content');
             $table->timestamps();
         });
     }
