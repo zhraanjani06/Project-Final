@@ -1,0 +1,178 @@
+@extends('layouts.app')
+
+@section('title', 'Admin Panel')
+@section('page_title', 'Admin Panel')
+
+@section('content')
+    <div class="row g-4">
+        <!-- Main Admin Stats -->
+        <div class="col-12">
+            <div class="custom-card p-4">
+                <h4 class="text-white fw-bold mb-1"><i class="fa-solid fa-user-shield text-primary me-2"></i>Panel Administrator</h4>
+                <p class="text-muted mb-0">Kelola pengguna sistem, kamus kata sentimen (lexicon), dan tinjau log database.</p>
+            </div>
+        </div>
+
+        @if(session('success'))
+            <div class="col-12">
+                <div class="alert alert-success border-0 bg-success bg-opacity-15 text-success rounded-3">
+                    <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="col-12">
+                <div class="alert alert-danger border-0 bg-danger bg-opacity-15 text-danger rounded-3">
+                    <i class="fa-solid fa-circle-xmark me-2"></i>{{ session('error') }}
+                </div>
+            </div>
+        @endif
+
+        <!-- Users Management Tab -->
+        <div class="col-lg-6">
+            <div class="custom-card h-100">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-users text-primary me-2"></i>Manajemen Pengguna</span>
+                </div>
+                <div class="card-body-custom">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped align-middle mb-0" style="font-size: 0.9rem;">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>NAMA</th>
+                                    <th>EMAIL</th>
+                                    <th>HAK AKSES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($users as $user)
+                                    <tr>
+                                        <td>{{ $user->id }}</td>
+                                        <td class="fw-semibold text-white">{{ $user->name }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>
+                                            <span class="badge @if($user->role === 'admin') bg-primary @else bg-secondary @endif bg-opacity-25 text-light border border-white border-opacity-10">
+                                                {{ strtoupper($user->role) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Lexicon Form -->
+        <div class="col-lg-6">
+            <div class="custom-card h-100">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-plus text-primary me-2"></i>Tambah Kata Lexicon Baru</span>
+                </div>
+                <div class="card-body-custom">
+                    <form action="{{ route('admin.lexicon.add') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="word" class="form-label">Kata Sentimen</label>
+                            <input type="text" name="word" id="word" class="form-control" placeholder="Contoh: shutdown, supply, success" required>
+                            <div class="form-text text-muted">Kata harus berupa huruf kecil tanpa spasi. Contoh kata logistik, cuaca, ekonomi.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="type" class="form-label">Jenis Sentimen</label>
+                            <select name="type" id="type" class="form-select bg-dark border-secondary text-white rounded-3">
+                                <option value="positive">Positif (Meningkatkan skor stabil/mengurangi risiko)</option>
+                                <option value="negative">Negatif (Meningkatkan skor risiko)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-3 w-100">
+                            <i class="fa-solid fa-floppy-disk me-2"></i>Simpan Kata
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lexicon Positive List -->
+        <div class="col-lg-6">
+            <div class="custom-card">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-thumbs-up text-success me-2"></i>Kata Sentimen Positif</span>
+                </div>
+                <div class="card-body-custom">
+                    <div class="table-responsive mb-3">
+                        <table class="table table-dark table-striped align-middle mb-0" style="font-size: 0.9rem;">
+                            <thead>
+                                <tr>
+                                    <th>KATA</th>
+                                    <th class="text-end">AKSI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($positives as $pos)
+                                    <tr>
+                                        <td class="fw-semibold text-success">{{ $pos->word }}</td>
+                                        <td class="text-end">
+                                            <form action="{{ route('admin.lexicon.delete', ['type' => 'positive', 'id' => $pos->id]) }}" method="POST" onsubmit="return confirm('Hapus kata ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-xs btn-outline-danger py-1 px-2 rounded-3">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        {{ $positives->appends(['neg_page' => $negatives->currentPage()])->links() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lexicon Negative List -->
+        <div class="col-lg-6">
+            <div class="custom-card">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-thumbs-down text-danger me-2"></i>Kata Sentimen Negatif</span>
+                </div>
+                <div class="card-body-custom">
+                    <div class="table-responsive mb-3">
+                        <table class="table table-dark table-striped align-middle mb-0" style="font-size: 0.9rem;">
+                            <thead>
+                                <tr>
+                                    <th>KATA</th>
+                                    <th class="text-end">AKSI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($negatives as $neg)
+                                    <tr>
+                                        <td class="fw-semibold text-danger">{{ $neg->word }}</td>
+                                        <td class="text-end">
+                                            <form action="{{ route('admin.lexicon.delete', ['type' => 'negative', 'id' => $neg->id]) }}" method="POST" onsubmit="return confirm('Hapus kata ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-xs btn-outline-danger py-1 px-2 rounded-3">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        {{ $negatives->appends(['pos_page' => $positives->currentPage()])->links() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

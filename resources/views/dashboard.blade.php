@@ -1,0 +1,136 @@
+@extends('layouts.app')
+
+@section('title', 'Dashboard Overview')
+@section('page_title', 'Dashboard Overview')
+
+@section('content')
+    <div class="row g-4">
+        <!-- Welcome Card -->
+        <div class="col-12">
+            <div class="custom-card p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="text-white fw-bold mb-2">Selamat Datang di SC Risk Intel!</h2>
+                        <p class="text-muted mb-0">Platform Intelijen Risiko Rantai Pasok Global berbasis analisis data real-time, cuaca, fluktuasi mata uang, berita logistik, dan lokasi pelabuhan global.</p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        @if($criticalRisksCount > 0)
+                            <span class="badge badge-risk badge-risk-high py-2 px-3">
+                                <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ $criticalRisksCount }} Negara Risiko Tinggi
+                            </span>
+                        @else
+                            <span class="badge badge-risk badge-risk-low py-2 px-3">
+                                <i class="fa-solid fa-shield-halved me-1"></i> Semua Negara Stabil
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Cards -->
+        <div class="col-md-4">
+            <div class="custom-card">
+                <div class="card-body-custom d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary me-4">
+                        <i class="fa-solid fa-earth-asia fa-2x"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1 uppercase tracking-wider" style="font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;">NEGARA TERPANTAU</h6>
+                        <h3 class="text-white fw-bold mb-0">{{ $countriesCount }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="custom-card">
+                <div class="card-body-custom d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-3 text-success me-4">
+                        <i class="fa-solid fa-anchor fa-2x"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1 uppercase tracking-wider" style="font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;">PELABUHAN TERDAFTAR</h6>
+                        <h3 class="text-white fw-bold mb-0">{{ $portsCount }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="custom-card">
+                <div class="card-body-custom d-flex align-items-center">
+                    <div class="bg-danger bg-opacity-10 p-3 rounded-3 text-danger me-4">
+                        <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1 uppercase tracking-wider" style="font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;">RISIKO TINGGI (ALERTI)</h6>
+                        <h3 class="text-white fw-bold mb-0">{{ $criticalRisksCount }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Levels by Country -->
+        <div class="col-12">
+            <div class="custom-card">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-ranking-star me-2 text-primary"></i>Daftar Risiko Negara Terpantau</span>
+                    <span class="text-muted" style="font-size: 0.8rem;">Diurutkan berdasarkan Skor Risiko</span>
+                </div>
+                <div class="card-body-custom">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0" style="border-collapse: separate; border-spacing: 0 8px;">
+                            <thead>
+                                <tr class="text-muted" style="font-size: 0.85rem;">
+                                    <th class="ps-3">NEGARA</th>
+                                    <th>WILAYAH</th>
+                                    <th>SKOR RISIKO (W)</th>
+                                    <th>TINGKAT RISIKO</th>
+                                    <th class="text-end pe-3">AKSI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($countries as $c)
+                                    <tr style="background-color: rgba(255,255,255,0.02); border-radius: 8px;">
+                                        <td class="py-3 ps-3 fw-semibold text-white">
+                                            @php
+                                                $flagEmojis = ['ID'=>'🇮🇩','US'=>'🇺🇸','SG'=>'🇸🇬','CN'=>'🇨🇳','DE'=>'🇩🇪','AU'=>'🇦🇺','GB'=>'🇬🇧','JP'=>'🇯🇵','BR'=>'🇧🇷','IN'=>'🇮🇳','NL'=>'🇳🇱','AE'=>'🇦🇪'];
+                                                $emoji = $flagEmojis[$c['code']] ?? '🌐';
+                                            @endphp
+                                            <span class="me-2 fs-5">{{ $emoji }}</span>{{ $c['name'] }}
+                                        </td>
+                                        <td>{{ $c['region'] }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <strong class="me-2">{{ $c['score'] }}</strong>
+                                                <div class="progress w-50 bg-secondary bg-opacity-25" style="height: 6px;">
+                                                    <div class="progress-bar @if($c['score'] >= 70) bg-danger @elseif($c['score'] >= 35) bg-warning @else bg-success @endif" 
+                                                         role="progressbar" style="width: {{ $c['score'] }}%" aria-valuenow="{{ $c['score'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if($c['score'] >= 70)
+                                                <span class="badge badge-risk badge-risk-high">High Risk</span>
+                                            @elseif($c['score'] >= 35)
+                                                <span class="badge badge-risk badge-risk-medium">Medium Risk</span>
+                                            @else
+                                                <span class="badge badge-risk badge-risk-low">Low Risk</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-end pe-3">
+                                            <a href="{{ route('country-assessment', ['code' => $c['code']]) }}" class="btn btn-sm btn-outline-primary rounded-3 px-3">
+                                                <i class="fa-solid fa-eye me-1"></i> Detail
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
