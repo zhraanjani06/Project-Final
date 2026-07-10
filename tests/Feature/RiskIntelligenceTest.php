@@ -104,4 +104,61 @@ class RiskIntelligenceTest extends TestCase
                      'risk'
                  ]);
     }
+
+    /**
+     * Test that non-admin users cannot access admin endpoints.
+     */
+    public function test_non_admin_cannot_access_admin_endpoints(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+
+        $this->actingAs($user)->get('/admin')->assertStatus(403);
+        $this->actingAs($user)->post('/admin/ports', ['name' => 'Test Port'])->assertStatus(403);
+    }
+
+    /**
+     * Test that admin can view admin panel, add and delete ports.
+     */
+    public function test_admin_can_manage_ports(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $country = Country::firstOrCreate(
+            ['code' => 'ID'],
+            [
+                'name' => 'Indonesia',
+                'region' => 'Asia',
+                'currency_code' => 'IDR',
+                'latitude' => -0.789,
+                'longitude' => 113.921
+            ]
+        );
+
+        // Can access admin panel
+        $response = $this->actingAs($admin)->get('/admin');
+        $response->assertStatus(200);
+
+        // Can add port
+        $postResponse = $this->actingAs($admin)->post('/admin/ports', [
+            'name' => 'Test Rotterdam Port',
+            'country_code' => 'ID',
+            'latitude' => 1.234,
+            'longitude' => 5.678
+        ]);
+        $postResponse->assertRedirect();
+        
+        $this->assertDatabaseHas('ports', [
+            'name' => 'Test Rotterdam Port',
+            'country_code' => 'ID'
+        ]);
+
+        $portId = \App\Models\Port::where('name', 'Test Rotterdam Port')->first()->id;
+
+        // Can delete port
+        $deleteResponse = $this->actingAs($admin)->delete("/admin/ports/{$portId}");
+        $deleteResponse->assertRedirect();
+
+        $this->assertDatabaseMissing('ports', [
+            'id' => $portId
+        ]);
+    }
 }

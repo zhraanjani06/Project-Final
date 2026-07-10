@@ -195,12 +195,61 @@ class DashboardController extends Controller
         $users = User::all();
         $positives = PositiveWord::orderBy('word', 'asc')->paginate(10, ['*'], 'pos_page');
         $negatives = NegativeWord::orderBy('word', 'asc')->paginate(10, ['*'], 'neg_page');
+        $ports = Port::orderBy('name', 'asc')->paginate(10, ['*'], 'ports_page');
+        $countriesList = Country::orderBy('name', 'asc')->get();
 
         return view('pages.admin_panel', [
             'users' => $users,
             'positives' => $positives,
-            'negatives' => $negatives
+            'negatives' => $negatives,
+            'ports' => $ports,
+            'countriesList' => $countriesList,
         ]);
+    }
+
+    /**
+     * Admin: Add Port.
+     */
+    public function addPort(Request $request)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'country_code' => 'required|string|max:3|exists:countries,code',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric'
+        ]);
+
+        Port::create([
+            'name' => $request->name,
+            'country_code' => strtoupper($request->country_code),
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+        ]);
+
+        return back()->with('success', "Pelabuhan '{$request->name}' berhasil ditambahkan.");
+    }
+
+    /**
+     * Admin: Delete Port.
+     */
+    public function deletePort(int $id)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $port = Port::find($id);
+        if ($port) {
+            $portName = $port->name;
+            $port->delete();
+            return back()->with('success', "Pelabuhan '{$portName}' berhasil dihapus.");
+        }
+
+        return back()->with('error', "Pelabuhan tidak ditemukan.");
     }
 
     /**

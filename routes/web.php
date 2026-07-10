@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin', [DashboardController::class, 'adminPanel'])->name('admin.panel');
     Route::post('/admin/lexicon', [DashboardController::class, 'addWord'])->name('admin.lexicon.add');
     Route::delete('/admin/lexicon/{type}/{id}', [DashboardController::class, 'deleteWord'])->name('admin.lexicon.delete');
+    Route::post('/admin/ports', [DashboardController::class, 'addPort'])->name('admin.ports.add');
+    Route::delete('/admin/ports/{id}', [DashboardController::class, 'deletePort'])->name('admin.ports.delete');
 
     // API endpoints
     Route::prefix('api')->group(function () {
