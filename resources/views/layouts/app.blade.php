@@ -300,6 +300,18 @@
             transform: translateY(0px) !important;
         }
 
+        /* Clickable News Card Hover Effect */
+        .news-card-hover {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            cursor: pointer;
+        }
+        .news-card-hover:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border-color: rgba(236, 72, 153, 0.4) !important;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 15px var(--accent-glow) !important;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;

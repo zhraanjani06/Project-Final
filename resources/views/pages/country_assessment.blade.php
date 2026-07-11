@@ -282,17 +282,19 @@
                                             $badgeColor = 'bg-danger';
                                         }
                                     @endphp
-                                    <div class="card bg-black bg-opacity-35 text-white h-100 rounded-3" style="border: 1px solid {{ $cardBorder }};">
+                                    <div class="card bg-black bg-opacity-35 text-white h-100 rounded-3 position-relative news-card-hover" style="border: 1px solid {{ $cardBorder }};">
                                         <div class="card-body d-flex flex-column">
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="badge {{ $badgeColor }} text-uppercase" style="font-size: 0.7rem;">{{ $art->sentiment }} (Score: {{ $art->sentiment_score }})</span>
-                                                <span class="small text-muted">{{ $art->source_name }}</span>
+                                            <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                                                <span class="badge {{ $badgeColor }} text-uppercase" style="font-size: 0.7rem; white-space: nowrap;">{{ $art->sentiment }} (Score: {{ $art->sentiment_score }})</span>
+                                                <span class="small text-muted text-end" style="font-size: 0.75rem; line-height: 1.2; word-break: break-word; max-width: 60%;">
+                                                    <i class="fa-solid fa-square-rss me-1 text-primary"></i>{{ $art->source_name }}
+                                                </span>
                                             </div>
                                             <h6 class="card-title fw-bold text-white mb-2" style="font-size: 0.95rem; line-height: 1.4;">{{ $art->title }}</h6>
                                             <p class="card-text text-muted small flex-grow-1" style="font-size: 0.82rem; line-height: 1.5;">{{ Str::limit($art->description, 130) }}</p>
                                             <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-25">
                                                 <span class="small text-muted" style="font-size: 0.75rem;">{{ date('d M Y H:i', strtotime($art->published_at)) }}</span>
-                                                <a href="{{ $art->url }}" target="_blank" class="btn btn-xs btn-outline-light py-1 px-2 rounded-3" style="font-size: 0.75rem;">
+                                                <a href="{{ $art->url }}" target="_blank" class="btn btn-xs btn-outline-light py-1 px-2 rounded-3 stretched-link" style="font-size: 0.75rem;">
                                                     Baca <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 0.65rem;"></i>
                                                 </a>
                                             </div>
