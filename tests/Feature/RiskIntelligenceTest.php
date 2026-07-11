@@ -114,6 +114,7 @@ class RiskIntelligenceTest extends TestCase
 
         $this->actingAs($user)->get('/admin')->assertStatus(403);
         $this->actingAs($user)->post('/admin/ports', ['name' => 'Test Port'])->assertStatus(403);
+        $this->actingAs($user)->post('/admin/articles', ['title' => 'Test Article'])->assertStatus(403);
     }
 
     /**
@@ -159,6 +160,48 @@ class RiskIntelligenceTest extends TestCase
 
         $this->assertDatabaseMissing('ports', [
             'id' => $portId
+        ]);
+    }
+
+    /**
+     * Test that admin can manage expert analysis articles.
+     */
+    public function test_admin_can_manage_articles(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $country = Country::firstOrCreate(
+            ['code' => 'ID'],
+            [
+                'name' => 'Indonesia',
+                'region' => 'Asia',
+                'currency_code' => 'IDR',
+                'latitude' => -0.789,
+                'longitude' => 113.921
+            ]
+        );
+
+        // Can add analysis article
+        $postResponse = $this->actingAs($admin)->post('/admin/articles', [
+            'title' => 'Analisis Selat Sunda',
+            'content' => 'Tingkat kepadatan meningkat...',
+            'country_code' => 'ID'
+        ]);
+        $postResponse->assertRedirect();
+
+        $this->assertDatabaseHas('articles', [
+            'title' => 'Analisis Selat Sunda',
+            'country_code' => 'ID',
+            'author_id' => $admin->id
+        ]);
+
+        $articleId = \App\Models\Article::where('title', 'Analisis Selat Sunda')->first()->id;
+
+        // Can delete analysis article
+        $deleteResponse = $this->actingAs($admin)->delete("/admin/articles/{$articleId}");
+        $deleteResponse->assertRedirect();
+
+        $this->assertDatabaseMissing('articles', [
+            'id' => $articleId
         ]);
     }
 }

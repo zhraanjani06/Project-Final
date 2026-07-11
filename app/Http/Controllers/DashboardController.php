@@ -10,8 +10,10 @@ use App\Models\User;
 use App\Models\Watchlist;
 use App\Models\RiskScore;
 use App\Services\RiskIntelligenceService;
+use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
@@ -58,11 +60,18 @@ class DashboardController extends Controller
             return $b['score'] <=> $a['score'];
         });
 
+        // Get latest admin analysis articles
+        $latestArticles = Article::with('author', 'country')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
         return view('dashboard', [
             'countriesCount' => $countriesCount,
             'portsCount' => $portsCount,
             'criticalRisksCount' => $criticalRisksCount,
             'countries' => $countriesData,
+            'latestArticles' => $latestArticles,
         ]);
     }
 
@@ -103,11 +112,18 @@ class DashboardController extends Controller
             ->where('country_code', $selectedCode)
             ->exists();
 
+        // Get analysis articles for the selected country
+        $analysisArticles = Article::with('author')
+            ->where('country_code', $selectedCode)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return view('pages.country_assessment', [
             'countries' => $countries,
             'selectedCode' => $selectedCode,
             'assessment' => $assessment,
             'inWatchlist' => $inWatchlist,
+            'analysisArticles' => $analysisArticles,
         ]);
     }
 
@@ -197,6 +213,7 @@ class DashboardController extends Controller
         $negatives = NegativeWord::orderBy('word', 'asc')->paginate(10, ['*'], 'neg_page');
         $ports = Port::orderBy('name', 'asc')->paginate(10, ['*'], 'ports_page');
         $countriesList = Country::orderBy('name', 'asc')->get();
+        $articles = Article::with('author', 'country')->orderBy('created_at', 'desc')->paginate(10, ['*'], 'articles_page');
 
         return view('pages.admin_panel', [
             'users' => $users,
@@ -204,6 +221,7 @@ class DashboardController extends Controller
             'negatives' => $negatives,
             'ports' => $ports,
             'countriesList' => $countriesList,
+            'articles' => $articles,
         ]);
     }
 
@@ -303,5 +321,49 @@ class DashboardController extends Controller
         }
 
         return back()->with('error', "Kata tidak ditemukan.");
+    }
+
+    /**
+     * Admin: Add Analysis Article.
+     */
+    public function addArticle(Request $request)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'country_code' => 'nullable|string|max:3|exists:countries,code'
+        ]);
+
+        Article::create([
+            'author_id' => Auth::id(),
+            'country_code' => $request->country_code ? strtoupper($request->country_code) : null,
+            'title' => $request->title,
+            'content' => $request->content
+        ]);
+
+        return back()->with('success', "Artikel analisis '{$request->title}' berhasil diterbitkan.");
+    }
+
+    /**
+     * Admin: Delete Analysis Article.
+     */
+    public function deleteArticle(int $id)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $article = Article::find($id);
+        if ($article) {
+            $title = $article->title;
+            $article->delete();
+            return back()->with('success', "Artikel '{$title}' berhasil dihapus.");
+        }
+
+        return back()->with('error', "Artikel tidak ditemukan.");
     }
 }

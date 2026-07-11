@@ -71,9 +71,9 @@
             </div>
         </div>
 
-        <!-- Risk Levels by Country -->
-        <div class="col-12">
-            <div class="custom-card">
+        <!-- Risk Levels by Country & Latest Articles -->
+        <div class="col-lg-8">
+            <div class="custom-card h-100">
                 <div class="card-header-accent">
                     <span><i class="fa-solid fa-ranking-star me-2 text-primary"></i>Daftar Risiko Negara Terpantau</span>
                     <span class="text-muted" style="font-size: 0.8rem;">Diurutkan berdasarkan Skor Risiko</span>
@@ -129,6 +129,46 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="custom-card h-100">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-feather me-2 text-primary"></i>Analisis Ahli Terbaru</span>
+                </div>
+                <div class="card-body-custom">
+                    @if($latestArticles->isEmpty())
+                        <div class="text-center text-muted py-5">
+                            <i class="fa-solid fa-newspaper fa-3x mb-3 text-white text-opacity-15"></i>
+                            <p class="mb-0">Belum ada artikel analisis terbaru.</p>
+                        </div>
+                    @else
+                        <div class="d-flex flex-column gap-3">
+                            @foreach($latestArticles as $art)
+                                <div class="p-3 rounded-3" style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color);">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="text-white fw-bold mb-0" style="font-size: 0.95rem;">{{ $art->title }}</h6>
+                                    </div>
+                                    <div class="mb-2">
+                                        @if($art->country)
+                                            <span class="badge bg-primary bg-opacity-15 text-primary border border-primary border-opacity-10" style="font-size: 0.7rem;">{{ $art->country->name }}</span>
+                                        @else
+                                            <span class="badge bg-secondary bg-opacity-15 text-muted border border-secondary border-opacity-10" style="font-size: 0.7rem;">Global</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-muted mb-3" style="font-size: 0.82rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.45;">
+                                        {{ $art->content }}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center" style="font-size: 0.75rem;">
+                                        <span class="text-primary"><i class="fa-solid fa-user me-1"></i>{{ $art->author ? $art->author->name : 'Admin' }}</span>
+                                        <span class="text-muted"><i class="fa-solid fa-calendar-day me-1"></i>{{ $art->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

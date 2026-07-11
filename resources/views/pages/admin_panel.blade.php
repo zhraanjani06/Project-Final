@@ -35,7 +35,7 @@
         <div class="col-12">
             <div class="custom-card p-4">
                 <h4 class="text-white fw-bold mb-1"><i class="fa-solid fa-user-shield text-primary me-2"></i>Panel Administrator</h4>
-                <p class="text-muted mb-0">Kelola pengguna sistem, kamus kata sentimen (lexicon), lokasi pelabuhan, dan tinjau log database.</p>
+                <p class="text-muted mb-0">Kelola pengguna sistem, kamus kata sentimen (lexicon), lokasi pelabuhan, dan publikasikan artikel analisis risiko.</p>
             </div>
         </div>
 
@@ -71,7 +71,7 @@
         <div class="col-12">
             <ul class="nav admin-tabs mb-4" id="adminTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link @if(!request()->has('ports_page')) active @endif" id="lexicon-tab" data-bs-toggle="tab" data-bs-target="#lexicon-content" type="button" role="tab" aria-controls="lexicon-content" aria-selected="@if(!request()->has('ports_page')) true @else false @endif">
+                    <button class="nav-link @if(!request()->has('ports_page') && !request()->has('articles_page')) active @endif" id="lexicon-tab" data-bs-toggle="tab" data-bs-target="#lexicon-content" type="button" role="tab" aria-controls="lexicon-content" aria-selected="@if(!request()->has('ports_page') && !request()->has('articles_page')) true @else false @endif">
                         <i class="fa-solid fa-book-open me-2"></i>Kamus & Pengguna
                     </button>
                 </li>
@@ -80,11 +80,16 @@
                         <i class="fa-solid fa-anchor me-2"></i>Manajemen Pelabuhan
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link @if(request()->has('articles_page')) active @endif" id="articles-tab" data-bs-toggle="tab" data-bs-target="#articles-content" type="button" role="tab" aria-controls="articles-content" aria-selected="@if(request()->has('articles_page')) true @else false @endif">
+                        <i class="fa-solid fa-file-pen me-2"></i>Artikel Analisis
+                    </button>
+                </li>
             </ul>
 
             <div class="tab-content" id="adminTabsContent">
                 <!-- Tab: Lexicon & Users -->
-                <div class="tab-pane fade @if(!request()->has('ports_page')) show active @endif" id="lexicon-content" role="tabpanel" aria-labelledby="lexicon-tab">
+                <div class="tab-pane fade @if(!request()->has('ports_page') && !request()->has('articles_page')) show active @endif" id="lexicon-content" role="tabpanel" aria-labelledby="lexicon-tab">
                     <div class="row g-4">
                         <!-- Users Management Table -->
                         <div class="col-lg-6">
@@ -186,7 +191,7 @@
                                         </table>
                                     </div>
                                     <div>
-                                        {{ $positives->appends(['neg_page' => $negatives->currentPage(), 'ports_page' => $ports->currentPage()])->links() }}
+                                        {{ $positives->appends(['neg_page' => $negatives->currentPage(), 'ports_page' => $ports->currentPage(), 'articles_page' => $articles->currentPage()])->links() }}
                                     </div>
                                 </div>
                             </div>
@@ -226,7 +231,7 @@
                                         </table>
                                     </div>
                                     <div>
-                                        {{ $negatives->appends(['pos_page' => $positives->currentPage(), 'ports_page' => $ports->currentPage()])->links() }}
+                                        {{ $negatives->appends(['pos_page' => $positives->currentPage(), 'ports_page' => $ports->currentPage(), 'articles_page' => $articles->currentPage()])->links() }}
                                     </div>
                                 </div>
                             </div>
@@ -315,7 +320,104 @@
                                         </table>
                                     </div>
                                     <div>
-                                        {{ $ports->appends(['pos_page' => $positives->currentPage(), 'neg_page' => $negatives->currentPage()])->links() }}
+                                        {{ $ports->appends(['pos_page' => $positives->currentPage(), 'neg_page' => $negatives->currentPage(), 'articles_page' => $articles->currentPage()])->links() }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Artikel Analisis -->
+                <div class="tab-pane fade @if(request()->has('articles_page')) show active @endif" id="articles-content" role="tabpanel" aria-labelledby="articles-tab">
+                    <div class="row g-4">
+                        <!-- Add Article Form -->
+                        <div class="col-lg-4">
+                            <div class="custom-card">
+                                <div class="card-header-accent">
+                                    <span><i class="fa-solid fa-feather text-primary me-2"></i>Tulis Artikel Analisis</span>
+                                </div>
+                                <div class="card-body-custom">
+                                    <form action="{{ route('admin.articles.add') }}" method="POST">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label for="art_title" class="form-label">Judul Artikel</label>
+                                            <input type="text" name="title" id="art_title" class="form-control" placeholder="Contoh: Analisis Kestabilan Selat Malaka" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="art_country" class="form-label">Negara Terkait (Opsional)</label>
+                                            <select name="country_code" id="art_country" class="form-select bg-dark border-secondary text-white rounded-3">
+                                                <option value="">Umum / Global (Tidak terikat negara tertentu)</option>
+                                                @foreach($countriesList as $c)
+                                                    <option value="{{ $c->code }}">{{ $c->name }} ({{ $c->code }})</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="art_content" class="form-label">Konten Artikel</label>
+                                            <textarea name="content" id="art_content" rows="6" class="form-control" placeholder="Tulis konten analisis logistik dan risiko di sini..." required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary rounded-3 w-100">
+                                            <i class="fa-solid fa-paper-plane me-2"></i>Terbitkan Artikel
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Articles List Table -->
+                        <div class="col-lg-8">
+                            <div class="custom-card">
+                                <div class="card-header-accent">
+                                    <span><i class="fa-solid fa-file-invoice text-primary me-2"></i>Daftar Artikel Diterbitkan</span>
+                                </div>
+                                <div class="card-body-custom">
+                                    <div class="table-responsive mb-3">
+                                        <table class="table table-dark table-striped align-middle mb-0" style="font-size: 0.9rem;">
+                                            <thead>
+                                                <tr>
+                                                    <th>JUDUL</th>
+                                                    <th>NEGARA</th>
+                                                    <th>PENULIS</th>
+                                                    <th>TANGGAL</th>
+                                                    <th class="text-end">AKSI</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if($articles->count() == 0)
+                                                    <tr>
+                                                        <td colspan="5" class="text-center text-muted py-4">Belum ada artikel analisis yang diterbitkan.</td>
+                                                    </tr>
+                                                @else
+                                                    @foreach($articles as $art)
+                                                        <tr>
+                                                            <td class="fw-semibold text-white">{{ $art->title }}</td>
+                                                            <td>
+                                                                @if($art->country)
+                                                                    <span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-10">{{ $art->country->name }}</span>
+                                                                @else
+                                                                    <span class="badge bg-secondary bg-opacity-25 text-muted border border-secondary border-opacity-10">Global</span>
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ $art->author ? $art->author->name : 'N/A' }}</td>
+                                                            <td>{{ $art->created_at->format('d M Y H:i') }}</td>
+                                                            <td class="text-end">
+                                                                <form action="{{ route('admin.articles.delete', $art->id) }}" method="POST" onsubmit="return confirm('Hapus artikel ini?')">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-xs btn-outline-danger py-1 px-2 rounded-3">
+                                                                        <i class="fa-solid fa-trash-can"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div>
+                                        {{ $articles->appends(['pos_page' => $positives->currentPage(), 'neg_page' => $negatives->currentPage(), 'ports_page' => $ports->currentPage()])->links() }}
                                     </div>
                                 </div>
                             </div>

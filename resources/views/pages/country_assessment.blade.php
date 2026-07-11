@@ -219,6 +219,41 @@
             </div>
         </div>
 
+        <!-- Expert Analysis Section -->
+        <div class="col-12">
+            <div class="custom-card">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-feather text-primary me-2"></i>Artikel Analisis Pakar (Admin)</span>
+                    <span class="text-muted" style="font-size: 0.8rem;">Analisis mendalam mengenai risiko logistik & supply chain di {{ $profile['name'] }}</span>
+                </div>
+                <div class="card-body-custom">
+                    @if($analysisArticles->isEmpty())
+                        <div class="text-center py-4 text-muted">
+                            <i class="fa-solid fa-feather fa-2x mb-3 text-secondary opacity-50"></i>
+                            <p class="mb-0">Belum ada artikel analisis pakar yang ditulis untuk {{ $profile['name'] }} saat ini.</p>
+                        </div>
+                    @else
+                        <div class="row g-4">
+                            @foreach($analysisArticles as $art)
+                                <div class="col-12">
+                                    <div class="p-4 rounded-3 text-white" style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color);">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 class="fw-bold mb-0 text-white">{{ $art->title }}</h5>
+                                            <span class="text-muted small"><i class="fa-solid fa-calendar-day me-1"></i>{{ $art->created_at->format('d M Y H:i') }}</span>
+                                        </div>
+                                        <div class="mb-3 text-primary small">
+                                            <i class="fa-solid fa-user-tie me-1"></i> Ditulis oleh: <strong>{{ $art->author ? $art->author->name : 'Administrator' }}</strong>
+                                        </div>
+                                        <p class="mb-0 text-muted" style="white-space: pre-line; line-height: 1.6; font-size: 0.92rem;">{{ $art->content }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
         <!-- News Feed & Sentiment Analysis -->
         <div class="col-12">
             <div class="custom-card">

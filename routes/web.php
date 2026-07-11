@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/lexicon/{type}/{id}', [DashboardController::class, 'deleteWord'])->name('admin.lexicon.delete');
     Route::post('/admin/ports', [DashboardController::class, 'addPort'])->name('admin.ports.add');
     Route::delete('/admin/ports/{id}', [DashboardController::class, 'deletePort'])->name('admin.ports.delete');
+    Route::post('/admin/articles', [DashboardController::class, 'addArticle'])->name('admin.articles.add');
+    Route::delete('/admin/articles/{id}', [DashboardController::class, 'deleteArticle'])->name('admin.articles.delete');
 
     // API endpoints
     Route::prefix('api')->group(function () {
