@@ -17,20 +17,20 @@
     
     <style>
         :root {
-            --bg-gradient-start: #0f172a; /* Slate 900 */
-            --bg-gradient-end: #1e293b; /* Slate 800 */
-            --accent-glow: rgba(59, 130, 246, 0.15); /* Blue glow */
-            --glass-bg: rgba(30, 41, 59, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --text-muted: #94a3b8;
-            --primary-accent: #3b82f6; /* Premium Blue */
-            --secondary-accent: #60a5fa;
+            --bg-gradient-start: #0f0717;
+            --bg-gradient-end: #1a0f28;
+            --accent-glow: rgba(236, 72, 153, 0.25);
+            --glass-bg: rgba(30, 16, 45, 0.75);
+            --glass-border: rgba(236, 72, 153, 0.18);
+            --text-muted: #d8b4fe;
+            --primary-accent: #ec4899;
+            --secondary-accent: #c084fc;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-            color: #f1f5f9;
+            color: #fdf4ff;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -44,7 +44,7 @@
             position: absolute;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, rgba(0,0,0,0) 70%);
             top: -10%;
             left: -10%;
             z-index: 0;
@@ -55,7 +55,7 @@
             position: absolute;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(192, 132, 252, 0.12) 0%, rgba(0,0,0,0) 70%);
             bottom: -10%;
             right: -10%;
             z-index: 0;
@@ -88,7 +88,7 @@
         .brand-logo {
             font-size: 2.2rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #60a5fa, #3b82f6, #9333ea);
+            background: linear-gradient(135deg, #f472b6, #ec4899, #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-align: center;
@@ -109,24 +109,24 @@
         .form-label {
             font-weight: 500;
             font-size: 0.85rem;
-            color: #cbd5e1;
+            color: #fdf4ff;
             margin-bottom: 8px;
             letter-spacing: 0.3px;
         }
 
         .input-group-text {
-            background-color: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--glass-border);
-            color: #94a3b8;
+            background-color: rgba(21, 10, 33, 0.5) !important;
+            border: 1px solid rgba(236, 72, 153, 0.3) !important;
+            color: #d8b4fe;
             border-top-left-radius: 10px;
             border-bottom-left-radius: 10px;
             transition: border-color 0.3s ease;
         }
 
         .form-control {
-            background-color: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--glass-border);
-            color: #f1f5f9;
+            background-color: rgba(21, 10, 33, 0.5) !important;
+            border: 1px solid rgba(236, 72, 153, 0.3) !important;
+            color: #fdf4ff;
             padding: 12px 16px;
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
@@ -135,9 +135,9 @@
         }
 
         .form-control:focus {
-            background-color: rgba(15, 23, 42, 0.8);
-            border-color: var(--primary-accent);
-            box-shadow: 0 0 0 4px var(--accent-glow);
+            background-color: rgba(21, 10, 33, 0.8) !important;
+            border-color: var(--primary-accent) !important;
+            box-shadow: 0 0 0 4px var(--accent-glow) !important;
             color: #fff;
         }
 
@@ -148,7 +148,7 @@
         }
 
         .btn-accent {
-            background: linear-gradient(135deg, var(--primary-accent), #2563eb);
+            background: linear-gradient(135deg, var(--primary-accent), #db2777);
             border: none;
             color: #fff;
             padding: 14px;
@@ -157,18 +157,22 @@
             font-size: 0.95rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
         }
 
         .btn-accent:hover {
-            background: linear-gradient(135deg, #60a5fa, var(--primary-accent));
+            background: linear-gradient(135deg, #f472b6, var(--primary-accent));
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
             color: #fff;
         }
 
         .btn-accent:active {
             transform: translateY(1px);
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
         }
 
         .auth-footer {

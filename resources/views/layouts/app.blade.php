@@ -6,10 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') - SC Risk Intel</title>
     
-    <!-- Google Fonts: Inter -->
+    <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -21,21 +21,21 @@
     
     <style>
         :root {
-            --bg-dark: #090d16;
-            --card-bg: rgba(17, 24, 39, 0.7);
-            --sidebar-bg: #0b111e;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --primary-accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.15);
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
+            --bg-dark: #0f0717;
+            --card-bg: rgba(30, 16, 45, 0.7);
+            --sidebar-bg: #150a21;
+            --border-color: rgba(236, 72, 153, 0.15);
+            --primary-accent: #ec4899;
+            --accent-glow: rgba(236, 72, 153, 0.25);
+            --text-main: #fdf4ff;
+            --text-muted: #d8b4fe;
             --success-color: #10b981;
-            --danger-color: #ef4444;
+            --danger-color: #f43f5e;
             --warning-color: #f59e0b;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             min-height: 100vh;
@@ -59,7 +59,7 @@
             padding: 24px;
             font-size: 1.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #60a5fa, #3b82f6, #9333ea);
+            background: linear-gradient(135deg, #f472b6, #ec4899, #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             border-bottom: 1px solid var(--border-color);
@@ -97,28 +97,71 @@
 
         .sidebar-link:hover, .sidebar-item.active .sidebar-link {
             color: #fff;
-            background-color: rgba(59, 130, 246, 0.1);
+            background-color: rgba(236, 72, 153, 0.12);
         }
 
         .sidebar-item.active .sidebar-link {
             color: #fff;
             background-color: var(--primary-accent);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
         }
 
         .sidebar-link-logout {
-            color: #f87171;
+            color: #f43f5e;
         }
 
         .sidebar-link-logout:hover {
-            background-color: rgba(239, 68, 68, 0.1) !important;
-            color: #ef4444;
+            background-color: rgba(244, 63, 94, 0.1) !important;
+            color: #f43f5e;
+        }
+
+        /* Form & Input controls */
+        .form-control, .form-select, textarea {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(236, 72, 153, 0.3) !important;
+            color: #fdf4ff !important;
+        }
+        .form-control::placeholder {
+            color: rgba(216, 180, 254, 0.5) !important;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #ec4899 !important;
+            box-shadow: 0 0 0 0.25rem rgba(236, 72, 153, 0.25) !important;
+            background-color: rgba(255, 255, 255, 0.08) !important;
+            color: #fdf4ff !important;
+        }
+        .form-text {
+            color: #d8b4fe !important;
+            opacity: 0.8;
+        }
+        .form-label {
+            color: #fdf4ff !important;
+            font-weight: 500;
+        }
+        select option {
+            background-color: #150a21 !important;
+            color: #fdf4ff !important;
+        }
+
+        .table {
+            color: #fdf4ff !important;
+        }
+        .table-striped>tbody>tr:nth-of-type(odd)>* {
+            color: #fdf4ff !important;
+        }
+        .table-hover>tbody>tr:hover>* {
+            color: #fff !important;
+            background-color: rgba(236, 72, 153, 0.08) !important;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
         }
 
         /* Top Navbar Styling */
         .top-navbar {
             height: 70px;
-            background-color: rgba(9, 13, 22, 0.8);
+            background-color: rgba(15, 7, 23, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
@@ -146,14 +189,33 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
+            border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .custom-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #f472b6, #ec4899, #c084fc);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .custom-card:hover {
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 0 20px var(--accent-glow);
-            border-color: rgba(59, 130, 246, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 22px 45px rgba(0, 0, 0, 0.35), 0 0 25px var(--accent-glow);
+            border-color: rgba(236, 72, 153, 0.4);
+        }
+
+        .custom-card:hover::before {
+            opacity: 1;
         }
 
         .card-header-accent {
@@ -197,6 +259,45 @@
             background-color: rgba(239, 68, 68, 0.15);
             color: var(--danger-color);
             border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Cute Gradient Buttons */
+        .btn-primary, .btn-accent {
+            background: linear-gradient(135deg, var(--primary-accent), #db2777) !important;
+            border: none !important;
+            color: #fff !important;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3) !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            border-radius: 10px !important;
+            padding: 8px 16px !important;
+            font-weight: 600 !important;
+        }
+        .btn-primary:hover, .btn-accent:hover {
+            background: linear-gradient(135deg, #f472b6, var(--primary-accent)) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 18px rgba(236, 72, 153, 0.5) !important;
+        }
+        .btn-primary:active, .btn-accent:active {
+            transform: translateY(0px) !important;
+        }
+        .btn-outline-primary {
+            color: var(--primary-accent) !important;
+            border-color: rgba(236, 72, 153, 0.4) !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            border-radius: 10px !important;
+            padding: 8px 16px !important;
+            font-weight: 600 !important;
+            background-color: transparent !important;
+        }
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #f472b6, var(--primary-accent)) !important;
+            color: #fff !important;
+            border-color: transparent !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3) !important;
+        }
+        .btn-outline-primary:active {
+            transform: translateY(0px) !important;
         }
 
         /* Custom Scrollbar */

@@ -123,8 +123,8 @@
                                     <td class="fw-bold text-light">{{ $dataA['risk']['currency_score'] }}</td>
                                     <td class="fw-bold text-light">{{ $dataB['risk']['currency_score'] }}</td>
                                 </tr>
-                                <tr class="table-primary bg-opacity-25" style="border-top: 2px solid var(--primary-accent) !important;">
-                                    <td class="fw-bold text-white">TOTAL SKOR RISIKO</td>
+                                <tr style="background: rgba(236, 72, 153, 0.15) !important; border-top: 2px solid var(--primary-accent) !important;">
+                                    <td class="fw-bold" style="color: #fdf4ff !important;">TOTAL SKOR RISIKO</td>
                                     <td class="fw-bold text-white fs-5">{{ $dataA['risk']['total_score'] }} / 100</td>
                                     <td class="fw-bold text-white fs-5">{{ $dataB['risk']['total_score'] }} / 100</td>
                                 </tr>
@@ -167,16 +167,16 @@
                         {
                             label: labelA,
                             data: scoresA,
-                            backgroundColor: 'rgba(59, 130, 246, 0.65)',
-                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(236, 72, 153, 0.65)',
+                            borderColor: '#ec4899',
                             borderWidth: 2,
                             borderRadius: 6
                         },
                         {
                             label: labelB,
                             data: scoresB,
-                            backgroundColor: 'rgba(239, 68, 68, 0.65)',
-                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(192, 132, 252, 0.65)',
+                            borderColor: '#c084fc',
                             borderWidth: 2,
                             borderRadius: 6
                         }
