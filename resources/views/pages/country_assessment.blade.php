@@ -259,7 +259,7 @@
             <div class="custom-card">
                 <div class="card-header-accent">
                     <span><i class="fa-solid fa-newspaper text-primary me-2"></i>Umpan Berita Logistik & Sentimen Lexicon</span>
-                    <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-25" style="font-size: 0.75rem;">Skor Risiko Sentimen: {{ $risk['news_score'] }}</span>
+                    <span class="badge" style="background-color: rgba(244, 63, 94, 0.15) !important; color: #fdf4ff !important; border: 1px solid rgba(244, 63, 94, 0.3) !important; font-size: 0.75rem;">Skor Risiko Sentimen: {{ $risk['news_score'] }}</span>
                 </div>
                 <div class="card-body-custom">
                     @if(count($news['articles']) === 0)
@@ -282,7 +282,7 @@
                                             $badgeColor = 'bg-danger';
                                         }
                                     @endphp
-                                    <div class="card bg-black bg-opacity-35 text-white h-100 rounded-3 position-relative news-card-hover" style="border: 1px solid {{ $cardBorder }};">
+                                    <div class="card bg-black bg-opacity-35 text-white h-100 rounded-3 position-relative news-card-hover" style="border: 1px solid {{ $cardBorder }}; cursor: pointer;" onclick="window.open('{{ $art->url }}', '_blank')">
                                         <div class="card-body d-flex flex-column">
                                             <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
                                                 <span class="badge {{ $badgeColor }} text-uppercase" style="font-size: 0.7rem; white-space: nowrap;">{{ $art->sentiment }} (Score: {{ $art->sentiment_score }})</span>
@@ -294,9 +294,9 @@
                                             <p class="card-text text-muted small flex-grow-1" style="font-size: 0.82rem; line-height: 1.5;">{{ Str::limit($art->description, 130) }}</p>
                                             <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-25">
                                                 <span class="small text-muted" style="font-size: 0.75rem;">{{ date('d M Y H:i', strtotime($art->published_at)) }}</span>
-                                                <a href="{{ $art->url }}" target="_blank" class="btn btn-xs btn-outline-light py-1 px-2 rounded-3 stretched-link" style="font-size: 0.75rem;">
+                                                <span class="btn btn-xs btn-outline-light py-1 px-2 rounded-3" style="font-size: 0.75rem;">
                                                     Baca <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 0.65rem;"></i>
-                                                </a>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>

@@ -176,7 +176,7 @@
 
                         infoBox.innerHTML = `
                             <div class="mb-4">
-                                <span class="badge bg-primary bg-opacity-15 text-primary mb-2" style="font-size: 0.75rem;"><i class="fa-solid fa-anchor me-1"></i> Pelabuhan</span>
+                                <span class="badge mb-2" style="background-color: rgba(59, 130, 246, 0.15) !important; color: #f1f5f9 !important; border: 1px solid rgba(59, 130, 246, 0.3) !important; font-size: 0.75rem;"><i class="fa-solid fa-anchor me-1"></i> Pelabuhan</span>
                                 <h4 class="text-white fw-bold mb-1">${port.name}</h4>
                                 <span class="text-muted text-uppercase tracking-wider fs-7">Kordinat: ${port.latitude.toFixed(4)}, ${port.longitude.toFixed(4)}</span>
                             </div>

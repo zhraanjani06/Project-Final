@@ -34,7 +34,7 @@
             <div class="custom-card">
                 <div class="card-header-accent">
                     <span><i class="fa-solid fa-map-location-dot text-primary me-2"></i>Peta Risiko Cuaca Global</span>
-                    <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30">Live Open-Meteo</span>
+                    <span class="badge" style="background-color: rgba(59, 130, 246, 0.15) !important; color: #f1f5f9 !important; border: 1px solid rgba(59, 130, 246, 0.3) !important;">Live Open-Meteo</span>
                 </div>
                 <div class="card-body-custom p-0">
                     <div id="weather-map"></div>

@@ -72,11 +72,35 @@ class RiskIntelligenceService
             ];
         });
 
-        // 5. Get News & Analyze Sentiment (Cache: 3 hours)
-        $newsData = Cache::remember("country_news_{$code}", now()->addHours(3), function () use ($country, $code) {
-            $articles = $this->gnews->getNews($country->name, $code);
-            return $this->analyzeAndCacheNews($articles, $code);
-        });
+        // 5. Get News & Analyze Sentiment (Cache Flag: 3 hours)
+        $newsCacheKey = "country_news_updated_{$code}";
+        $needsUpdate = !Cache::has($newsCacheKey);
+
+        if ($needsUpdate) {
+            try {
+                $articles = $this->gnews->getNews($country->name, $code);
+                $this->analyzeAndCacheNews($articles, $code);
+                Cache::put($newsCacheKey, true, now()->addHours(3));
+            } catch (\Exception $e) {
+                Log::error("Failed to fetch/analyze news for {$code}: " . $e->getMessage());
+            }
+        }
+
+        // Get news directly from the database table (news_caches)
+        $dbArticles = NewsCache::where('country_code', $code)
+            ->orderBy('published_at', 'desc')
+            ->get();
+
+        $newsData = [
+            'articles' => $dbArticles,
+            'positive_count' => $dbArticles->where('sentiment', 'Positive')->count(),
+            'negative_count' => $dbArticles->where('sentiment', 'Negative')->count(),
+            'neutral_count' => $dbArticles->where('sentiment', 'Neutral')->count(),
+            'total_count' => $dbArticles->count(),
+            'news_risk_score' => $dbArticles->count() > 0 
+                ? ($dbArticles->where('sentiment', 'Negative')->count() / $dbArticles->count()) * 100 
+                : 0.0
+        ];
 
         // 6. Calculate Risk Scores
         $riskData = $this->calculateWeightedRisk($code, $weather, $economy, $currency, $newsData);

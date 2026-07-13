@@ -64,7 +64,7 @@ class GNewsService
                 [
                     'title' => 'Tanjung Priok Port Implements Digital Log Book to Combat Vessel Congestion',
                     'description' => 'The Indonesian Ministry of Transportation has launched a new system at Jakarta’s main port to reduce queue times and streamline container clearance amid rising trade volumes.',
-                    'url' => 'https://example.com/news/id-port-digitalization',
+                    'url' => 'https://www.porttechnology.org/',
                     'source_name' => 'Jakarta Logistics Review',
                     'published_at' => $now->subHours(2)->toDateTimeString(),
                     'country_code' => 'ID'
@@ -72,7 +72,7 @@ class GNewsService
                 [
                     'title' => 'Severe Weather warning in Java Sea Disrupts Inter-Island Shipping Routes',
                     'description' => 'High waves and heavy rain have prompted maritime authorities to issue a warning for cargo vessels, delaying coal and agricultural shipments across the Indonesian archipelago.',
-                    'url' => 'https://example.com/news/id-weather-disruption',
+                    'url' => 'https://www.reuters.com/business/autos-transportation/',
                     'source_name' => 'Maritime Asia',
                     'published_at' => $now->subHours(10)->toDateTimeString(),
                     'country_code' => 'ID'
@@ -80,7 +80,7 @@ class GNewsService
                 [
                     'title' => 'Indonesia Economic growth remains stable at 5% supported by Nickel Export Boost',
                     'description' => 'Despite global head winds, resource processing and regional trade agreements continue to bolster Indonesian supply chains and manufacturing sectors.',
-                    'url' => 'https://example.com/news/id-gdp-boost',
+                    'url' => 'https://www.cnbc.com/economy/',
                     'source_name' => 'Globe Finance',
                     'published_at' => $now->subDays(1)->toDateTimeString(),
                     'country_code' => 'ID'
@@ -90,7 +90,7 @@ class GNewsService
                 [
                     'title' => 'Port of Los Angeles reports 15% increase in cargo volume amidst manufacturing recovery',
                     'description' => 'The busiest port complex in North America experienced a significant surge in imports, raising concerns over potential rail network bottlenecks in the upcoming peak season.',
-                    'url' => 'https://example.com/news/us-port-congestion',
+                    'url' => 'https://www.logisticsmgmt.com/',
                     'source_name' => 'US Logistics Daily',
                     'published_at' => $now->subHours(4)->toDateTimeString(),
                     'country_code' => 'US'
@@ -98,7 +98,7 @@ class GNewsService
                 [
                     'title' => 'Tariff expansion proposals inject uncertainty into US-China trade routes',
                     'description' => 'Supply chain managers are actively diversifying fulfillment paths as new import restrictions on battery components and solar panels loom.',
-                    'url' => 'https://example.com/news/us-china-tariff',
+                    'url' => 'https://www.supplychainbrain.com/',
                     'source_name' => 'Trade Policy Monitor',
                     'published_at' => $now->subHours(12)->toDateTimeString(),
                     'country_code' => 'US'
@@ -106,7 +106,7 @@ class GNewsService
                 [
                     'title' => 'Federal Reserve maintains high interest rates to curb inflation, hitting warehouse expansions',
                     'description' => 'Rising borrowing costs are slowing down capital investments for logistics properties, threatening to restrict future supply chain capacity.',
-                    'url' => 'https://example.com/news/us-inflation-rates',
+                    'url' => 'https://www.cnbc.com/economy/',
                     'source_name' => 'Wall Street Economic Digest',
                     'published_at' => $now->subDays(2)->toDateTimeString(),
                     'country_code' => 'US'
@@ -116,7 +116,7 @@ class GNewsService
                 [
                     'title' => 'Singapore Tuas Port expansion uses AI to optimize automated guided vehicles',
                     'description' => 'The Maritime and Port Authority of Singapore announced a new fleet of autonomous vehicles to speed up container transit times at the mega-port.',
-                    'url' => 'https://example.com/news/sg-tuas-ai',
+                    'url' => 'https://www.porttechnology.org/',
                     'source_name' => 'Singapore Technology Focus',
                     'published_at' => $now->subHours(6)->toDateTimeString(),
                     'country_code' => 'SG'
@@ -124,7 +124,7 @@ class GNewsService
                 [
                     'title' => 'Maritime hubs collaborate to establish green shipping corridor via Singapore',
                     'description' => 'A new coalition aims to introduce low-emission fuels for cargo vessels, altering refueling logistics along primary East-West shipping lanes.',
-                    'url' => 'https://example.com/news/sg-green-shipping',
+                    'url' => 'https://www.seatrade-maritime.com/',
                     'source_name' => 'Green Logistics Int',
                     'published_at' => $now->subDays(1)->toDateTimeString(),
                     'country_code' => 'SG'
@@ -134,7 +134,7 @@ class GNewsService
                 [
                     'title' => 'Shanghai Port Sets Record for Monthly Container Throughput',
                     'description' => 'Operations at the world\'s largest port reached record efficiency due to automated deep-water berths, boosting export logistics throughout China\'s industrial belts.',
-                    'url' => 'https://example.com/news/cn-shanghai-throughput',
+                    'url' => 'https://www.seatrade-maritime.com/',
                     'source_name' => 'China Shipping News',
                     'published_at' => $now->subHours(8)->toDateTimeString(),
                     'country_code' => 'CN'
@@ -142,7 +142,7 @@ class GNewsService
                 [
                     'title' => 'Factory Output and Exports Dip Slightly Amid Slowing Global Demand',
                     'description' => 'Chinese manufacturers are experiencing a reduction in new export orders, reflecting inflationary pressures and inventory adjustments in Western economies.',
-                    'url' => 'https://example.com/news/cn-export-slowdown',
+                    'url' => 'https://www.reuters.com/markets/',
                     'source_name' => 'East Asia Financial',
                     'published_at' => $now->subDays(1)->toDateTimeString(),
                     'country_code' => 'CN'
@@ -152,7 +152,7 @@ class GNewsService
                 [
                     'title' => 'Rhine River Water Levels Decline, Threatening Inland Barging Logistics',
                     'description' => 'A lack of rainfall in central Europe has lowered depth indicators, forcing cargo barges to load at half capacity, increasing transport costs for chemicals and coal.',
-                    'url' => 'https://example.com/news/de-rhine-river',
+                    'url' => 'https://www.bloomberg.com/',
                     'source_name' => 'European Waterways Journal',
                     'published_at' => $now->subHours(5)->toDateTimeString(),
                     'country_code' => 'DE'
@@ -160,7 +160,7 @@ class GNewsService
                 [
                     'title' => 'German Manufacturers warn of supply chain bottlenecks due to Suez canal rerouting',
                     'description' => 'Extended voyages around Africa have delayed critical electronics components, impacting production schedules at automotive and machinery plants.',
-                    'url' => 'https://example.com/news/de-suez-reroute',
+                    'url' => 'https://www.logisticsmgmt.com/',
                     'source_name' => 'German Industrial Report',
                     'published_at' => $now->subDays(1)->toDateTimeString(),
                     'country_code' => 'DE'
@@ -172,7 +172,7 @@ class GNewsService
             [
                 'title' => "Supply Chain operations adapt to local economic changes in {$countryName}",
                 'description' => "Local logistics networks in {$countryName} are adjusting to shifting market trends, ensuring regional distribution channels remain resilient.",
-                'url' => 'https://example.com/news/general-logistics',
+                'url' => 'https://www.logisticsmgmt.com/',
                 'source_name' => 'Global Logistics Wire',
                 'published_at' => $now->subHours(12)->toDateTimeString(),
                 'country_code' => $countryCode
@@ -180,7 +180,7 @@ class GNewsService
             [
                 'title' => "{$countryName} Trade Policy adjustments trigger logistics network restructuring",
                 'description' => "New import-export guidelines in {$countryName} have led business leaders to optimize warehouse capacity and supply routes.",
-                'url' => 'https://example.com/news/general-trade',
+                'url' => 'https://www.supplychainbrain.com/',
                 'source_name' => 'World Trade Insights',
                 'published_at' => $now->subDays(1)->toDateTimeString(),
                 'country_code' => $countryCode
