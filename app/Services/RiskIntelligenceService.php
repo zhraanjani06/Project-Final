@@ -37,7 +37,7 @@ class RiskIntelligenceService
      * Get all data for a country (Profile, Weather, Economy, Currency, News, Risk Score).
      * Automatically handles caching.
      */
-    public function getCountryAssessment(string $code): array
+    public function getCountryAssessment(string $code, bool $forceSyncNews = false): array
     {
         $code = strtoupper($code);
         $country = Country::where('code', $code)->first();
@@ -72,9 +72,10 @@ class RiskIntelligenceService
             ];
         });
 
-        // 5. Get News & Analyze Sentiment (Cache Flag: 3 hours)
+        // 5. Get News & Analyze Sentiment (Only update if forced or database is empty)
         $newsCacheKey = "country_news_updated_{$code}";
-        $needsUpdate = !Cache::has($newsCacheKey);
+        $dbArticlesCount = NewsCache::where('country_code', $code)->count();
+        $needsUpdate = $forceSyncNews || ($dbArticlesCount === 0);
 
         if ($needsUpdate) {
             try {

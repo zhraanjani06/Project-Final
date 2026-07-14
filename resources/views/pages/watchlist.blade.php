@@ -35,13 +35,9 @@
                                 </thead>
                                 <tbody>
                                     @foreach($watchlist as $item)
-                                        @php
-                                            $flagEmojis = ['ID'=>'🇮🇩','US'=>'🇺🇸','SG'=>'🇸🇬','CN'=>'🇨🇳','DE'=>'🇩🇪','AU'=>'🇦🇺','GB'=>'🇬🇧','JP'=>'🇯🇵','BR'=>'🇧🇷','IN'=>'🇮🇳','NL'=>'🇳🇱','AE'=>'🇦🇪'];
-                                            $emoji = $flagEmojis[$item['code']] ?? '🌐';
-                                        @endphp
                                         <tr id="row-{{ $item['code'] }}" style="border-bottom: 1px solid rgba(255,255,255,0.03);">
                                             <td class="py-3 ps-3 fw-semibold text-white">
-                                                <span class="me-2 fs-5">{{ $emoji }}</span>{{ $item['name'] }}
+                                                <span class="fi fi-{{ strtolower($item['code']) }} me-2 fs-5" style="border-radius: 3px;"></span>{{ $item['name'] }}
                                             </td>
                                             <td>{{ $item['region'] }}</td>
                                             <td>

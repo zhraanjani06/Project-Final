@@ -23,7 +23,7 @@ class ApiController extends Controller
      */
     public function getCountries()
     {
-        $countries = Country::all();
+        $countries = Country::active()->get();
         
         $result = [];
         foreach ($countries as $c) {
@@ -54,7 +54,7 @@ class ApiController extends Controller
      */
     public function getCountryDetails(string $code)
     {
-        $assessment = $this->riskService->getCountryAssessment($code);
+        $assessment = $this->riskService->getCountryAssessment($code, false);
         
         if (isset($assessment['error'])) {
             return response()->json(['message' => $assessment['error']], 404);

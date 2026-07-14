@@ -237,7 +237,31 @@ class RestCountriesService
             ]
         ];
 
-        return $mocks[$code] ?? [
+        if (isset($mocks[$code])) {
+            return $mocks[$code];
+        }
+
+        // Dynamic fallback from database
+        $dbCountry = \App\Models\Country::where('code', $code)->first();
+        if ($dbCountry) {
+            return [
+                'name' => $dbCountry->name,
+                'official_name' => $dbCountry->name,
+                'capital' => 'N/A',
+                'region' => $dbCountry->region,
+                'subregion' => 'N/A',
+                'population' => 0,
+                'currency_code' => $dbCountry->currency_code,
+                'currency_name' => 'Local Currency',
+                'currency_symbol' => $dbCountry->currency_code,
+                'language' => 'N/A',
+                'flag_emoji' => '🌐',
+                'flag_url' => '',
+                'source' => 'Local Database'
+            ];
+        }
+
+        return [
             'name' => 'Unknown Country',
             'official_name' => 'Unknown Country',
             'capital' => 'N/A',

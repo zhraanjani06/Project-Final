@@ -82,23 +82,19 @@
                     <div class="table-responsive">
                         <table class="table table-dark table-hover align-middle mb-0" style="border-collapse: separate; border-spacing: 0 8px;">
                             <thead>
-                                <tr class="text-muted" style="font-size: 0.85rem;">
-                                    <th class="ps-3">NEGARA</th>
-                                    <th>WILAYAH</th>
-                                    <th>SKOR RISIKO (W)</th>
-                                    <th>TINGKAT RISIKO</th>
-                                    <th class="text-end pe-3">AKSI</th>
+                                <tr class="text-muted text-nowrap" style="font-size: 0.85rem; letter-spacing: 0.5px;">
+                                    <th class="ps-3 fw-semibold pb-2 border-bottom border-secondary border-opacity-25">NEGARA</th>
+                                    <th class="fw-semibold pb-2 border-bottom border-secondary border-opacity-25">WILAYAH</th>
+                                    <th class="fw-semibold pb-2 border-bottom border-secondary border-opacity-25">SKOR RISIKO (W)</th>
+                                    <th class="fw-semibold pb-2 border-bottom border-secondary border-opacity-25">TINGKAT RISIKO</th>
+                                    <th class="text-end pe-3 fw-semibold pb-2 border-bottom border-secondary border-opacity-25">AKSI</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($countries as $c)
                                     <tr style="background-color: rgba(255,255,255,0.02); border-radius: 8px;">
                                         <td class="py-3 ps-3 fw-semibold text-white">
-                                            @php
-                                                $flagEmojis = ['ID'=>'🇮🇩','US'=>'🇺🇸','SG'=>'🇸🇬','CN'=>'🇨🇳','DE'=>'🇩🇪','AU'=>'🇦🇺','GB'=>'🇬🇧','JP'=>'🇯🇵','BR'=>'🇧🇷','IN'=>'🇮🇳','NL'=>'🇳🇱','AE'=>'🇦🇪'];
-                                                $emoji = $flagEmojis[$c['code']] ?? '🌐';
-                                            @endphp
-                                            <span class="me-2 fs-5">{{ $emoji }}</span>{{ $c['name'] }}
+                                            <span class="fi fi-{{ strtolower($c['code']) }} me-2 fs-5" style="border-radius: 3px;"></span>{{ $c['name'] }}
                                         </td>
                                         <td>{{ $c['region'] }}</td>
                                         <td>
@@ -151,11 +147,15 @@
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <h6 class="text-white fw-bold mb-0" style="font-size: 0.95rem;">{{ $art->title }}</h6>
                                     </div>
-                                    <div class="mb-2">
+                                    <div class="mb-2 mt-1">
                                         @if($art->country)
-                                            <span class="badge bg-primary bg-opacity-15 text-primary border border-primary border-opacity-10" style="font-size: 0.7rem;">{{ $art->country->name }}</span>
+                                            <span class="badge border border-primary text-white rounded-pill px-2 py-1 fw-normal" style="background-color: rgba(13, 110, 253, 0.2); font-size: 0.7rem; letter-spacing: 0.3px;">
+                                                <i class="fa-solid fa-earth-americas me-1 text-primary"></i>{{ $art->country->name }}
+                                            </span>
                                         @else
-                                            <span class="badge bg-secondary bg-opacity-15 text-muted border border-secondary border-opacity-10" style="font-size: 0.7rem;">Global</span>
+                                            <span class="badge border border-secondary text-white rounded-pill px-2 py-1 fw-normal" style="background-color: rgba(108, 117, 125, 0.2); font-size: 0.7rem; letter-spacing: 0.3px;">
+                                                <i class="fa-solid fa-globe me-1 text-secondary"></i>Global
+                                            </span>
                                         @endif
                                     </div>
                                     <p class="text-muted mb-3" style="font-size: 0.82rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.45;">

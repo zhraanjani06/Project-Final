@@ -5,6 +5,16 @@
 
 @section('content')
     <div class="row g-4">
+        @if(session('success'))
+            <div class="col-12">
+                <div class="alert border-0 rounded-3 text-white shadow-sm d-flex align-items-center mb-0" style="background-color: rgba(25, 135, 84, 0.15); border-left: 4px solid #198754 !important;">
+                    <i class="fa-solid fa-circle-check fs-5 me-3 text-success"></i>
+                    <div>
+                        <strong>Berhasil!</strong> {{ session('success') }}
+                    </div>
+                </div>
+            </div>
+        @endif
         <!-- Selector & Watchlist Header -->
         <div class="col-12">
             <div class="custom-card p-4">
@@ -37,9 +47,6 @@
             $news = $assessment['news'];
             $risk = $assessment['risk'];
             $country = $assessment['country'];
-
-            $flagEmojis = ['ID'=>'🇮🇩','US'=>'🇺🇸','SG'=>'🇸🇬','CN'=>'🇨🇳','DE'=>'🇩🇪','AU'=>'🇦🇺','GB'=>'🇬🇧','JP'=>'🇯🇵','BR'=>'🇧🇷','IN'=>'🇮🇳','NL'=>'🇳🇱','AE'=>'🇦🇪'];
-            $emoji = $flagEmojis[$selectedCode] ?? '🌐';
         @endphp
 
         <!-- Overall Risk Summary Card -->
@@ -68,59 +75,60 @@
                         <div class="fs-1 fw-extrabold text-white">{{ $risk['total_score'] }}</div>
                         <div class="small text-muted">dari 100</div>
                     </div>
-                </div>
-                <div>
-                    @if($risk['total_score'] >= 70)
-                        <span class="badge badge-risk badge-risk-high px-3 py-2">RISIKO TINGGI (HIGH)</span>
-                    @elseif($risk['total_score'] >= 35)
-                        <span class="badge badge-risk badge-risk-medium px-3 py-2">RISIKO SEDANG (MEDIUM)</span>
-                    @else
-                        <span class="badge badge-risk badge-risk-low px-3 py-2">RISIKO RENDAH (LOW)</span>
-                    @endif
+                    <!-- Status Badge -->
+                    <div class="position-absolute" style="bottom: -15px;">
+                        @if($risk['total_score'] >= 70)
+                            <span class="badge bg-danger text-white px-3 py-2 rounded-pill shadow-sm">RISIKO TINGGI (HIGH)</span>
+                        @elseif($risk['total_score'] >= 35)
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm">RISIKO SEDANG (MEDIUM)</span>
+                        @else
+                            <span class="badge bg-success text-white px-3 py-2 rounded-pill shadow-sm">RISIKO RENDAH (LOW)</span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Country Profile Details -->
+        <!-- Country Profile Details Card -->
         <div class="col-md-8">
             <div class="custom-card h-100">
                 <div class="card-header-accent">
                     <span><i class="fa-solid fa-earth-asia text-primary me-2"></i>Profil Negara</span>
-                    <span class="fs-4">{{ $emoji }}</span>
+                    <span class="fi fi-{{ strtolower($selectedCode) }} fs-4" style="border-radius: 3px;"></span>
                 </div>
                 <div class="card-body-custom">
-                    <div class="row g-4">
+                    <div class="row g-4 mt-0">
                         <div class="col-md-6">
-                            <ul class="list-group list-group-flush bg-transparent">
-                                <li class="list-group-item bg-transparent text-muted border-0 d-flex justify-content-between px-0 py-2">
-                                    <span>Nama Umum:</span>
-                                    <strong class="text-white">{{ $profile['name'] }}</strong>
-                                </li>
-                                <li class="list-group-item bg-transparent text-muted border-0 d-flex justify-content-between px-0 py-2">
-                                    <span>Nama Resmi:</span>
-                                    <strong class="text-white text-end" style="max-width: 70%;">{{ $profile['official_name'] }}</strong>
-                                </li>
-                                <li class="list-group-item bg-transparent text-muted border-0 d-flex justify-content-between px-0 py-2">
-                                    <span>Ibu Kota:</span>
-                                    <strong class="text-white">{{ $profile['capital'] }}</strong>
-                                </li>
-                            </ul>
+                            <div class="d-flex flex-column gap-2">
+                                <div>
+                                    <span class="text-muted small d-block mb-1">Nama Umum</span>
+                                    <h6 class="text-white fw-bold mb-0">{{ $profile['name'] }}</h6>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="text-muted small d-block mb-1">Nama Resmi</span>
+                                    <h6 class="text-white fw-bold mb-0">{{ $profile['official_name'] }}</h6>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="text-muted small d-block mb-1">Ibu Kota</span>
+                                    <h6 class="text-white fw-bold mb-0">{{ $profile['capital'] }}</h6>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <ul class="list-group list-group-flush bg-transparent">
-                                <li class="list-group-item bg-transparent text-muted border-0 d-flex justify-content-between px-0 py-2">
-                                    <span>Wilayah / Subwilayah:</span>
-                                    <strong class="text-white">{{ $profile['region'] }} / {{ $profile['subregion'] }}</strong>
-                                </li>
-                                <li class="list-group-item bg-transparent text-muted border-0 d-flex justify-content-between px-0 py-2">
-                                    <span>Mata Uang:</span>
-                                    <strong class="text-white">{{ $profile['currency_name'] }} ({{ $profile['currency_code'] }} - {{ $profile['currency_symbol'] }})</strong>
-                                </li>
-                                <li class="list-group-item bg-transparent text-muted border-0 d-flex justify-content-between px-0 py-2">
-                                    <span>Populasi:</span>
-                                    <strong class="text-white">{{ number_format($profile['population']) }}</strong>
-                                </li>
-                            </ul>
+                            <div class="d-flex flex-column gap-2">
+                                <div>
+                                    <span class="text-muted small d-block mb-1">Wilayah / Subwilayah</span>
+                                    <h6 class="text-white fw-bold mb-0">{{ $profile['region'] }} / {{ $profile['subregion'] }}</h6>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="text-muted small d-block mb-1">Mata Uang</span>
+                                    <h6 class="text-white fw-bold mb-0">{{ $profile['currency_name'] }} ({{ $profile['currency_code'] }} - {{ $profile['currency_symbol'] }})</h6>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="text-muted small d-block mb-1">Populasi</span>
+                                    <h6 class="text-white fw-bold mb-0">{{ number_format($profile['population']) }}</h6>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -132,10 +140,10 @@
             <div class="row g-4">
                 <!-- weather pillar -->
                 <div class="col-md-3">
-                    <div class="custom-card p-3">
+                    <div class="custom-card p-3 h-100">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small"><i class="fa-solid fa-cloud-sun me-1"></i> Cuaca (30%)</span>
-                            <span class="badge @if($risk['weather_score'] >= 70) bg-danger @elseif($risk['weather_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ $risk['weather_score'] }}</span>
+                            <span class="badge @if($risk['weather_score'] >= 70) bg-danger @elseif($risk['weather_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ number_format($risk['weather_score'], 1) }}</span>
                         </div>
                         <h4 class="text-white fw-bold mb-1">{{ $weather['temperature'] }}°C</h4>
                         <p class="text-muted small mb-0">{{ $weather['description'] }}</p>
@@ -143,10 +151,10 @@
                 </div>
                 <!-- economics pillar -->
                 <div class="col-md-3">
-                    <div class="custom-card p-3">
+                    <div class="custom-card p-3 h-100">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small"><i class="fa-solid fa-sack-dollar me-1"></i> Ekonomi (20%)</span>
-                            <span class="badge @if($risk['economic_score'] >= 70) bg-danger @elseif($risk['economic_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ $risk['economic_score'] }}</span>
+                            <span class="badge @if($risk['economic_score'] >= 70) bg-danger @elseif($risk['economic_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ number_format($risk['economic_score'], 1) }}</span>
                         </div>
                         <h4 class="text-white fw-bold mb-1">{{ $economy['inflation'] }}%</h4>
                         <p class="text-muted small mb-0">Inflasi Tahun {{ $economy['inflation_year'] }}</p>
@@ -154,10 +162,10 @@
                 </div>
                 <!-- news pillar -->
                 <div class="col-md-3">
-                    <div class="custom-card p-3">
+                    <div class="custom-card p-3 h-100">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small"><i class="fa-solid fa-newspaper me-1"></i> Sentimen (40%)</span>
-                            <span class="badge @if($risk['news_score'] >= 70) bg-danger @elseif($risk['news_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ $risk['news_score'] }}</span>
+                            <span class="badge @if($risk['news_score'] >= 70) bg-danger @elseif($risk['news_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ number_format($risk['news_score'], 1) }}</span>
                         </div>
                         <h4 class="text-white fw-bold mb-1">{{ $news['negative_count'] }} Negatif</h4>
                         <p class="text-muted small mb-0">dari total {{ $news['total_count'] }} berita</p>
@@ -165,10 +173,10 @@
                 </div>
                 <!-- currency pillar -->
                 <div class="col-md-3">
-                    <div class="custom-card p-3">
+                    <div class="custom-card p-3 h-100">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small"><i class="fa-solid fa-chart-line me-1"></i> Valuta (10%)</span>
-                            <span class="badge @if($risk['currency_score'] >= 70) bg-danger @elseif($risk['currency_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ $risk['currency_score'] }}</span>
+                            <span class="badge @if($risk['currency_score'] >= 70) bg-danger @elseif($risk['currency_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ number_format($risk['currency_score'], 1) }}</span>
                         </div>
                         <h4 class="text-white fw-bold mb-1">1 USD</h4>
                         <p class="text-muted small mb-0">{{ number_format($currency['rate_vs_usd'], 2) }} {{ $profile['currency_code'] }}</p>
@@ -197,20 +205,20 @@
                     <span><i class="fa-solid fa-chart-simple text-primary me-2"></i>Rincian Ekonomi (Bank Dunia)</span>
                 </div>
                 <div class="card-body-custom">
-                    <ul class="list-group list-group-flush bg-transparent">
-                        <li class="list-group-item bg-transparent text-muted border-0 d-flex justify-content-between px-0 py-3 border-bottom" style="border-color: var(--border-color) !important;">
-                            <span>Gross Domestic Product (GDP Nominal):</span>
-                            <strong class="text-white">${{ number_format($economy['gdp']) }} USD (Tahun {{ $economy['gdp_year'] }})</strong>
-                        </li>
-                        <li class="list-group-item bg-transparent text-muted border-0 d-flex justify-content-between px-0 py-3 border-bottom" style="border-color: var(--border-color) !important;">
-                            <span>Tingkat Inflasi Tahunan:</span>
-                            <strong class="text-white">{{ $economy['inflation'] }}% (Tahun {{ $economy['inflation_year'] }})</strong>
-                        </li>
-                        <li class="list-group-item bg-transparent text-muted border-0 d-flex justify-content-between px-0 py-3">
-                            <span>Kontribusi Ekspor Terhadap GDP:</span>
-                            <strong class="text-white">{{ $economy['exports_gdp_share'] }}% (Tahun {{ $economy['exports_year'] }})</strong>
-                        </li>
-                    </ul>
+                    <div class="d-flex flex-column gap-4 mt-2">
+                        <div>
+                            <span class="text-muted small d-block mb-1">Gross Domestic Product (GDP Nominal)</span>
+                            <h5 class="text-white fw-bold mb-0">${{ number_format($economy['gdp']) }} USD <span class="text-muted fs-6 fw-normal ms-1">(Tahun {{ $economy['gdp_year'] }})</span></h5>
+                        </div>
+                        <div>
+                            <span class="text-muted small d-block mb-1">Tingkat Inflasi Tahunan</span>
+                            <h5 class="text-white fw-bold mb-0">{{ $economy['inflation'] }}% <span class="text-muted fs-6 fw-normal ms-1">(Tahun {{ $economy['inflation_year'] }})</span></h5>
+                        </div>
+                        <div>
+                            <span class="text-muted small d-block mb-1">Kontribusi Ekspor Terhadap GDP</span>
+                            <h5 class="text-white fw-bold mb-0">{{ $economy['exports_gdp_share'] }}% <span class="text-muted fs-6 fw-normal ms-1">(Tahun {{ $economy['exports_year'] }})</span></h5>
+                        </div>
+                    </div>
                     <div class="mt-4 p-3 bg-white bg-opacity-5 rounded-3 border border-white border-opacity-5 text-muted" style="font-size: 0.85rem;">
                         <i class="fa-solid fa-circle-info me-2 text-info"></i>
                         Data ekonomi di atas ditarik langsung secara periodik dari API Bank Dunia (World Bank API) dengan menggunakan cache 7 hari untuk efisiensi server.
@@ -257,15 +265,23 @@
         <!-- News Feed & Sentiment Analysis -->
         <div class="col-12">
             <div class="custom-card">
-                <div class="card-header-accent">
-                    <span><i class="fa-solid fa-newspaper text-primary me-2"></i>Umpan Berita Logistik & Sentimen Lexicon</span>
-                    <span class="badge" style="background-color: rgba(244, 63, 94, 0.15) !important; color: #fdf4ff !important; border: 1px solid rgba(244, 63, 94, 0.3) !important; font-size: 0.75rem;">Skor Risiko Sentimen: {{ $risk['news_score'] }}</span>
+                <div class="card-header-accent d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fa-solid fa-newspaper text-primary me-2"></i>Umpan Berita Logistik & Sentimen Lexicon
+                        <span class="badge ms-2" style="background-color: rgba(244, 63, 94, 0.15) !important; color: #fdf4ff !important; border: 1px solid rgba(244, 63, 94, 0.3) !important; font-size: 0.75rem;">Skor Risiko Sentimen: {{ $risk['news_score'] }}</span>
+                    </div>
+                    <a href="{{ route('country-assessment', ['code' => $selectedCode, 'sync' => 1]) }}" class="btn btn-sm btn-outline-primary py-1 px-3 rounded-3" style="font-size: 0.8rem;">
+                        <i class="fa-solid fa-rotate me-1"></i> Sync Berita
+                    </a>
                 </div>
                 <div class="card-body-custom">
                     @if(count($news['articles']) === 0)
                         <div class="text-center py-5 text-muted">
                             <i class="fa-regular fa-newspaper fa-3x mb-3 text-secondary opacity-50"></i>
-                            <p class="mb-0">Tidak ada berita yang relevan untuk negara ini saat ini.</p>
+                            <p class="mb-3">Tidak ada berita yang relevan untuk negara ini saat ini.</p>
+                            <a href="{{ route('country-assessment', ['code' => $selectedCode, 'sync' => 1]) }}" class="btn btn-sm btn-primary rounded-3">
+                                <i class="fa-solid fa-rotate me-1"></i> Tarik Berita Baru
+                            </a>
                         </div>
                     @else
                         <div class="row g-4">

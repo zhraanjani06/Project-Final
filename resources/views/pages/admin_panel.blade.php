@@ -41,24 +41,34 @@
 
         @if(session('success'))
             <div class="col-12">
-                <div class="alert alert-success border-0 bg-success bg-opacity-15 text-success rounded-3">
-                    <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
+                <div class="alert border-0 rounded-3 text-white shadow-sm d-flex align-items-center" style="background-color: rgba(25, 135, 84, 0.15); border-left: 4px solid #198754 !important;">
+                    <i class="fa-solid fa-circle-check fs-5 me-3 text-success"></i>
+                    <div>
+                        <strong>Berhasil!</strong> {{ session('success') }}
+                    </div>
                 </div>
             </div>
         @endif
 
         @if(session('error'))
             <div class="col-12">
-                <div class="alert alert-danger border-0 bg-danger bg-opacity-15 text-danger rounded-3">
-                    <i class="fa-solid fa-circle-xmark me-2"></i>{{ session('error') }}
+                <div class="alert border-0 rounded-3 text-white shadow-sm d-flex align-items-center" style="background-color: rgba(220, 53, 69, 0.15); border-left: 4px solid #dc3545 !important;">
+                    <i class="fa-solid fa-circle-xmark fs-5 me-3 text-danger"></i>
+                    <div>
+                        <strong>Gagal!</strong> {{ session('error') }}
+                    </div>
                 </div>
             </div>
         @endif
 
         @if ($errors->any())
             <div class="col-12">
-                <div class="alert alert-danger border-0 bg-danger bg-opacity-15 text-danger rounded-3">
-                    <ul class="mb-0">
+                <div class="alert border-0 rounded-3 text-white shadow-sm" style="background-color: rgba(220, 53, 69, 0.15); border-left: 4px solid #dc3545 !important;">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fa-solid fa-triangle-exclamation fs-5 me-2 text-danger"></i>
+                        <strong>Terdapat Kesalahan!</strong>
+                    </div>
+                    <ul class="mb-0 text-muted">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -83,6 +93,11 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link @if(request()->has('articles_page')) active @endif" id="articles-tab" data-bs-toggle="tab" data-bs-target="#articles-content" type="button" role="tab" aria-controls="articles-content" aria-selected="@if(request()->has('articles_page')) true @else false @endif">
                         <i class="fa-solid fa-file-pen me-2"></i>Artikel Analisis
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link @if(request()->has('countries_page')) active @endif" id="countries-tab" data-bs-toggle="tab" data-bs-target="#countries-content" type="button" role="tab" aria-controls="countries-content" aria-selected="@if(request()->has('countries_page')) true @else false @endif">
+                        <i class="fa-solid fa-earth-americas me-2"></i>Pengaturan Negara
                     </button>
                 </li>
             </ul>
@@ -424,7 +439,137 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Tab: Country Settings -->
+                <div class="tab-pane fade @if(request()->has('countries_page')) show active @endif" id="countries-content" role="tabpanel" aria-labelledby="countries-tab">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="custom-card">
+                                <div class="card-header-accent">
+                                    <span><i class="fa-solid fa-earth-americas text-primary me-2"></i>Aktifkan / Nonaktifkan Negara Pemantauan</span>
+                                </div>
+                                <div class="card-body-custom p-4">
+                                    <p class="text-muted mb-3">Centang negara yang ingin ditampilkan di dasbor utama, peta cuaca, peta pelabuhan, dan pembanding. Negara yang tidak dicentang akan disembunyikan untuk menghemat penggunaan API.</p>
+                                    
+                                    <!-- Search and Quick Filters -->
+                                    <div class="row g-3 mb-4 align-items-center">
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-dark border-secondary text-muted" style="border-right: none;"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                                <input type="text" id="countrySearchInput" class="form-control bg-dark border-secondary text-white py-2" placeholder="Cari nama atau kode negara..." style="border-left: none; box-shadow: none;">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 text-md-end">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary me-2 rounded-3" onclick="filterCountrySelection('all')">Semua</button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-2 rounded-3" onclick="filterCountrySelection('active')">Aktif</button>
+                                            <button type="button" class="btn btn-sm btn-outline-warning rounded-3" onclick="filterCountrySelection('inactive')">Tidak Aktif</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <form action="{{ route('admin.countries.update') }}" method="POST">
+                                        @csrf
+                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                                            <span class="text-muted" style="font-size: 0.85rem;"><i class="fa-solid fa-bolt me-1 text-warning"></i>Aksi Cepat:</span>
+                                            <div>
+                                                <button type="button" class="btn btn-sm btn-success text-white fw-bold rounded-3 me-2 shadow-sm" onclick="toggleAllCountries(true)" style="letter-spacing: 0.5px;">
+                                                    <i class="fa-solid fa-check-double me-1"></i>Pilih Semua (Tampil)
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger text-white fw-bold rounded-3 shadow-sm" onclick="toggleAllCountries(false)" style="letter-spacing: 0.5px;">
+                                                    <i class="fa-solid fa-xmark me-1"></i>Batalkan Semua (Tampil)
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3" id="countriesContainer" style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
+                                            @foreach($countriesList as $c)
+                                                <div class="col-md-6 col-lg-4 col-xl-3 country-settings-item" data-name="{{ $c->name }}" data-code="{{ $c->code }}" data-active="{{ $c->is_active ? '1' : '0' }}">
+                                                    <div class="p-3 rounded-3 d-flex align-items-center justify-content-between h-100" style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); transition: all 0.3s ease;">
+                                                        <div class="d-flex align-items-center overflow-hidden w-100 me-2">
+                                                            <span class="fs-4 me-3">🌐</span>
+                                                            <div class="overflow-hidden w-100">
+                                                                <h6 class="text-white fw-bold mb-0 text-truncate" title="{{ $c->name }}" style="font-size: 0.95rem;">{{ $c->name }}</h6>
+                                                                <small class="text-muted text-truncate d-block">{{ $c->code }} | {{ $c->currency_code }}</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-check form-switch mb-0 flex-shrink-0">
+                                                            <input class="form-check-input" type="checkbox" name="active_countries[]" value="{{ $c->code }}" id="country-switch-{{ $c->code }}" {{ $c->is_active ? 'checked' : '' }} style="cursor: pointer; transform: scale(1.2);">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <div class="mt-4 pt-3 border-top border-secondary border-opacity-10 text-end">
+                                            <button type="submit" class="btn btn-primary rounded-3 px-4 py-2">
+                                                <i class="fa-solid fa-floppy-disk me-2"></i>Simpan Pengaturan Negara
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Search and Filter Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('countrySearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const query = this.value.toLowerCase();
+                    const items = document.querySelectorAll('.country-settings-item');
+                    items.forEach(item => {
+                        const name = item.getAttribute('data-name').toLowerCase();
+                        const code = item.getAttribute('data-code').toLowerCase();
+                        if (name.includes(query) || code.includes(query)) {
+                            item.style.setProperty('display', 'block', 'important');
+                        } else {
+                            item.style.setProperty('display', 'none', 'important');
+                        }
+                    });
+                });
+            }
+        });
+
+        function filterCountrySelection(type) {
+            const items = document.querySelectorAll('.country-settings-item');
+            items.forEach(item => {
+                const isActive = item.getAttribute('data-active') === '1';
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                const isChecked = checkbox ? checkbox.checked : false;
+
+                if (type === 'all') {
+                    item.style.setProperty('display', 'block', 'important');
+                } else if (type === 'active') {
+                    if (isChecked) {
+                        item.style.setProperty('display', 'block', 'important');
+                    } else {
+                        item.style.setProperty('display', 'none', 'important');
+                    }
+                } else if (type === 'inactive') {
+                    if (!isChecked) {
+                        item.style.setProperty('display', 'block', 'important');
+                    } else {
+                        item.style.setProperty('display', 'none', 'important');
+                    }
+                }
+            });
+        }
+
+        function toggleAllCountries(checkState) {
+            const items = document.querySelectorAll('.country-settings-item');
+            items.forEach(item => {
+                // Only toggle if the item is currently visible (not hidden by search filters)
+                if (window.getComputedStyle(item).display !== 'none') {
+                    const checkbox = item.querySelector('input[type="checkbox"]');
+                    if (checkbox && checkbox.checked !== checkState) {
+                        checkbox.checked = checkState;
+                        item.setAttribute('data-active', checkState ? '1' : '0');
+                    }
+                }
+            });
+        }
+    </script>
 @endsection

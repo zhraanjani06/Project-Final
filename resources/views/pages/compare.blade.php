@@ -73,8 +73,8 @@
                             <thead>
                                 <tr class="text-muted" style="border-bottom: 1px solid var(--border-color);">
                                     <th>INDIKATOR</th>
-                                    <th>{{ $emojiA }} {{ $dataA['profile']['name'] }}</th>
-                                    <th>{{ $emojiB }} {{ $dataB['profile']['name'] }}</th>
+                                    <th><span class="fi fi-{{ strtolower($countryA) }} me-1" style="border-radius: 2px;"></span> {{ $dataA['profile']['name'] }}</th>
+                                    <th><span class="fi fi-{{ strtolower($countryB) }} me-1" style="border-radius: 2px;"></span> {{ $dataB['profile']['name'] }}</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -160,18 +160,14 @@
 
                             <h5 class="text-white fw-semibold mb-3 border-bottom pb-2" style="border-color: rgba(255,255,255,0.05) !important;">Parameter Cuaca</h5>
                             
-                            <div class="row g-3 mb-4">
-                                <div class="col-6">
-                                    <div class="p-3 bg-white bg-opacity-5 rounded-3 border border-white border-opacity-5">
-                                        <div class="small text-muted mb-1"><i class="fa-solid fa-wind me-1 text-primary"></i> Kecepatan Angin</div>
-                                        <strong class="text-white">${weather.wind_speed} km/h</strong>
-                                    </div>
+                            <div class="d-flex flex-column gap-2 mb-4">
+                                <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="text-muted small"><i class="fa-solid fa-wind me-2 text-primary"></i>Kecepatan Angin</div>
+                                    <strong class="text-white">${weather.wind_speed} km/h</strong>
                                 </div>
-                                <div class="col-6">
-                                    <div class="p-3 bg-white bg-opacity-5 rounded-3 border border-white border-opacity-5">
-                                        <div class="small text-muted mb-1"><i class="fa-solid fa-droplet me-1 text-primary"></i> Curah Hujan</div>
-                                        <strong class="text-white">${weather.rain ? 'Ya' : 'Tidak'}</strong>
-                                    </div>
+                                <div class="d-flex justify-content-between align-items-center p-3 rounded-3" style="background-color: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="text-muted small"><i class="fa-solid fa-droplet me-2 text-primary"></i>Curah Hujan</div>
+                                    <strong class="text-white">${weather.rain ? 'Ya (Hujan)' : 'Tidak'}</strong>
                                 </div>
                             </div>
 

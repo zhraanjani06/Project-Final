@@ -29,11 +29,11 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $countriesCount = Country::count();
+        $countriesCount = Country::active()->count();
         $portsCount = Port::count();
         
-        // Get all countries with latest risk
-        $countries = Country::all();
+        // Get active countries with latest risk
+        $countries = Country::active()->get();
         $criticalRisksCount = 0;
         
         $countriesData = [];
@@ -80,7 +80,7 @@ class DashboardController extends Controller
      */
     public function weatherMap()
     {
-        $countries = Country::all();
+        $countries = Country::orderBy('name')->get();
         return view('pages.weather_map', compact('countries'));
     }
 
@@ -89,7 +89,7 @@ class DashboardController extends Controller
      */
     public function portMap()
     {
-        $countries = Country::all();
+        $countries = Country::orderBy('name')->get();
         return view('pages.port_map', compact('countries'));
     }
 
@@ -98,10 +98,20 @@ class DashboardController extends Controller
      */
     public function countryAssessment(Request $request)
     {
-        $countries = Country::all();
-        $selectedCode = $request->input('code', 'ID');
+        $countries = Country::active()->get();
+        $selectedCode = $request->input('code');
+
+        if (!$selectedCode || !$countries->contains('code', $selectedCode)) {
+            $selectedCode = $countries->first() ? $countries->first()->code : 'ID';
+        }
+
+        // Check if user requested a manual sync/refresh of news
+        if ($request->has('sync')) {
+            $this->riskService->getCountryAssessment($selectedCode, true);
+            return redirect()->route('country-assessment', ['code' => $selectedCode])->with('success', 'Berita berhasil disinkronisasi.');
+        }
         
-        $assessment = $this->riskService->getCountryAssessment($selectedCode);
+        $assessment = $this->riskService->getCountryAssessment($selectedCode, false);
         
         if (isset($assessment['error'])) {
             return redirect()->route('dashboard')->with('error', $assessment['error']);
@@ -132,10 +142,17 @@ class DashboardController extends Controller
      */
     public function compare(Request $request)
     {
-        $countries = Country::all();
+        $countries = Country::active()->get();
         
-        $countryA = $request->input('country_a', 'ID');
-        $countryB = $request->input('country_b', 'US');
+        $countryA = $request->input('country_a');
+        $countryB = $request->input('country_b');
+
+        if (!$countryA || !$countries->contains('code', $countryA)) {
+            $countryA = $countries->first() ? $countries->first()->code : 'ID';
+        }
+        if (!$countryB || !$countries->contains('code', $countryB)) {
+            $countryB = $countries->skip(1)->first() ? $countries->skip(1)->first()->code : 'US';
+        }
         
         $dataA = $this->riskService->getCountryAssessment($countryA);
         $dataB = $this->riskService->getCountryAssessment($countryB);
@@ -365,5 +382,30 @@ class DashboardController extends Controller
         }
 
         return back()->with('error', "Artikel tidak ditemukan.");
+    }
+
+    /**
+     * Admin: Update active countries settings.
+     */
+    public function updateCountrySettings(Request $request)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $activeCodes = $request->input('active_countries', []);
+
+        // Set all to inactive first
+        Country::query()->update(['is_active' => false]);
+
+        // Set selected to active
+        if (!empty($activeCodes)) {
+            Country::whereIn('code', $activeCodes)->update(['is_active' => true]);
+        }
+
+        // Clear cache so changes are immediate
+        Cache::flush();
+
+        return back()->with('success', 'Pengaturan negara berhasil diperbarui.');
     }
 }
