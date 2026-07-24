@@ -72,7 +72,7 @@
                                 stroke-linecap="round" transform="rotate(-90 80 80)"/>
                     </svg>
                     <div class="position-absolute text-center">
-                        <div class="fs-1 fw-extrabold text-white">{{ $risk['total_score'] }}</div>
+                        <div class="fs-1 fw-extrabold text-white">{{ \App\Helpers\FormatHelper::decimal($risk['total_score']) }}</div>
                         <div class="small text-muted">dari 100</div>
                     </div>
                     <!-- Status Badge -->
@@ -84,6 +84,16 @@
                         @else
                             <span class="badge bg-success text-white px-3 py-2 rounded-pill shadow-sm">RISIKO RENDAH (LOW)</span>
                         @endif
+                    </div>
+                </div>
+                
+                @php $prediction = $assessment['prediction']; @endphp
+                <!-- Prediction Box -->
+                <div class="mt-4 w-100 p-2 rounded bg-dark border border-secondary text-center" style="max-width: 250px;">
+                    <small class="text-muted d-block mb-1">Prediksi Risiko Mendatang</small>
+                    <div class="fs-5 fw-bold {{ $prediction['color'] }}">
+                        <i class="fa-solid {{ $prediction['icon'] }} me-1"></i>
+                        {{ $prediction['predicted_score'] }} ({{ $prediction['trend_label'] }})
                     </div>
                 </div>
             </div>
@@ -140,46 +150,57 @@
             <div class="row g-4">
                 <!-- weather pillar -->
                 <div class="col-md-3">
-                    <div class="custom-card p-3 h-100">
+                    <div class="custom-card p-3 h-100 position-relative">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small"><i class="fa-solid fa-cloud-sun me-1"></i> Cuaca (30%)</span>
-                            <span class="badge @if($risk['weather_score'] >= 70) bg-danger @elseif($risk['weather_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ number_format($risk['weather_score'], 1) }}</span>
+                            <span class="badge @if($risk['weather_score'] >= 70) bg-danger @elseif($risk['weather_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ \App\Helpers\FormatHelper::decimal($risk['weather_score']) }}</span>
                         </div>
                         <h4 class="text-white fw-bold mb-1">{{ $weather['temperature'] }}°C</h4>
                         <p class="text-muted small mb-0">{{ $weather['description'] }}</p>
+                        <div class="position-absolute" style="bottom: 8px; right: 12px;">
+                            <small class="text-muted" style="font-size: 0.65rem;"><i class="fa-regular fa-clock me-1"></i>{{ $weather['last_update'] ?? 'Baru saja' }}</small>
+                        </div>
                     </div>
                 </div>
                 <!-- economics pillar -->
                 <div class="col-md-3">
-                    <div class="custom-card p-3 h-100">
+                    <div class="custom-card p-3 h-100 position-relative">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small"><i class="fa-solid fa-sack-dollar me-1"></i> Ekonomi (20%)</span>
-                            <span class="badge @if($risk['economic_score'] >= 70) bg-danger @elseif($risk['economic_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ number_format($risk['economic_score'], 1) }}</span>
+                            <span class="badge @if($risk['economic_score'] >= 70) bg-danger @elseif($risk['economic_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ \App\Helpers\FormatHelper::decimal($risk['economic_score']) }}</span>
                         </div>
-                        <h4 class="text-white fw-bold mb-1">{{ $economy['inflation'] }}%</h4>
+                        <h4 class="text-white fw-bold mb-1">{{ \App\Helpers\FormatHelper::percentage($economy['inflation']) }}</h4>
                         <p class="text-muted small mb-0">Inflasi Tahun {{ $economy['inflation_year'] }}</p>
+                        <div class="position-absolute" style="bottom: 8px; right: 12px;">
+                            <small class="text-muted" style="font-size: 0.65rem;"><i class="fa-regular fa-clock me-1"></i>{{ $economy['last_update'] ?? 'Baru saja' }}</small>
+                        </div>
                     </div>
                 </div>
                 <!-- news pillar -->
                 <div class="col-md-3">
-                    <div class="custom-card p-3 h-100">
+                    <div class="custom-card p-3 h-100 position-relative">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small"><i class="fa-solid fa-newspaper me-1"></i> Sentimen (40%)</span>
-                            <span class="badge @if($risk['news_score'] >= 70) bg-danger @elseif($risk['news_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ number_format($risk['news_score'], 1) }}</span>
+                            <span class="badge @if($risk['news_score'] >= 70) bg-danger @elseif($risk['news_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ \App\Helpers\FormatHelper::decimal($risk['news_score']) }}</span>
                         </div>
                         <h4 class="text-white fw-bold mb-1">{{ $news['negative_count'] }} Negatif</h4>
                         <p class="text-muted small mb-0">dari total {{ $news['total_count'] }} berita</p>
+                        <div class="position-absolute" style="bottom: 8px; right: 12px;">
+                            <small class="text-muted" style="font-size: 0.65rem;"><i class="fa-regular fa-clock me-1"></i>{{ $news['last_update'] ?? 'Baru saja' }}</small>
+                        </div>
                     </div>
                 </div>
                 <!-- currency pillar -->
                 <div class="col-md-3">
-                    <div class="custom-card p-3 h-100">
+                    <div class="custom-card p-3 h-100 position-relative">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small"><i class="fa-solid fa-chart-line me-1"></i> Valuta (10%)</span>
-                            <span class="badge @if($risk['currency_score'] >= 70) bg-danger @elseif($risk['currency_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ number_format($risk['currency_score'], 1) }}</span>
+                            <span class="badge @if($risk['currency_score'] >= 70) bg-danger @elseif($risk['currency_score'] >= 35) bg-warning @else bg-success @endif bg-opacity-20 text-light border border-white border-opacity-10">{{ \App\Helpers\FormatHelper::decimal($risk['currency_score']) }}</span>
                         </div>
-                        <h4 class="text-white fw-bold mb-1">1 USD</h4>
-                        <p class="text-muted small mb-0">{{ number_format($currency['rate_vs_usd'], 2) }} {{ $profile['currency_code'] }}</p>
+                        <h5 class="text-white fw-bold mb-1 mt-3">{{ \App\Helpers\FormatHelper::currency($currency['rate_vs_usd'], $profile['currency_code']) }}</h5>
+                        <div class="position-absolute" style="bottom: 8px; right: 12px;">
+                            <small class="text-muted" style="font-size: 0.65rem;"><i class="fa-regular fa-clock me-1"></i>{{ $currency['last_update'] ?? 'Baru saja' }}</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -208,21 +229,60 @@
                     <div class="d-flex flex-column gap-4 mt-2">
                         <div>
                             <span class="text-muted small d-block mb-1">Gross Domestic Product (GDP Nominal)</span>
-                            <h5 class="text-white fw-bold mb-0">${{ number_format($economy['gdp']) }} USD <span class="text-muted fs-6 fw-normal ms-1">(Tahun {{ $economy['gdp_year'] }})</span></h5>
+                            <h5 class="text-white fw-bold mb-0">{{ \App\Helpers\FormatHelper::gdp($economy['gdp']) }} <span class="text-muted fs-6 fw-normal ms-1">(Tahun {{ $economy['gdp_year'] }})</span></h5>
                         </div>
                         <div>
                             <span class="text-muted small d-block mb-1">Tingkat Inflasi Tahunan</span>
-                            <h5 class="text-white fw-bold mb-0">{{ $economy['inflation'] }}% <span class="text-muted fs-6 fw-normal ms-1">(Tahun {{ $economy['inflation_year'] }})</span></h5>
+                            <h5 class="text-white fw-bold mb-0">{{ \App\Helpers\FormatHelper::percentage($economy['inflation']) }} <span class="text-muted fs-6 fw-normal ms-1">(Tahun {{ $economy['inflation_year'] }})</span></h5>
                         </div>
                         <div>
                             <span class="text-muted small d-block mb-1">Kontribusi Ekspor Terhadap GDP</span>
-                            <h5 class="text-white fw-bold mb-0">{{ $economy['exports_gdp_share'] }}% <span class="text-muted fs-6 fw-normal ms-1">(Tahun {{ $economy['exports_year'] }})</span></h5>
+                            <h5 class="text-white fw-bold mb-0">{{ \App\Helpers\FormatHelper::percentage($economy['exports_gdp_share']) }} <span class="text-muted fs-6 fw-normal ms-1">(Tahun {{ $economy['exports_year'] }})</span></h5>
                         </div>
                     </div>
                     <div class="mt-4 p-3 bg-white bg-opacity-5 rounded-3 border border-white border-opacity-5 text-muted" style="font-size: 0.85rem;">
                         <i class="fa-solid fa-circle-info me-2 text-info"></i>
                         Data ekonomi di atas ditarik langsung secara periodik dari API Bank Dunia (World Bank API) dengan menggunakan cache 7 hari untuk efisiensi server.
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Trend Chart -->
+        <div class="col-12">
+            <div class="custom-card h-100">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-chart-area text-warning me-2"></i>Histori Pergerakan Risiko (Risk Trend)</span>
+                    <span class="badge bg-warning text-dark border-0">Total Skor Risiko</span>
+                </div>
+                <div class="card-body-custom">
+                    <canvas id="riskChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- GDP Trend Chart -->
+        <div class="col-lg-6">
+            <div class="custom-card h-100">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-money-check-dollar text-success me-2"></i>Tren GDP (5 Tahun Terakhir)</span>
+                    <span class="badge bg-success text-white border-0">Bank Dunia</span>
+                </div>
+                <div class="card-body-custom">
+                    <canvas id="gdpChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inflation Trend Chart -->
+        <div class="col-lg-6">
+            <div class="custom-card h-100">
+                <div class="card-header-accent">
+                    <span><i class="fa-solid fa-arrow-trend-up text-danger me-2"></i>Tren Inflasi (5 Tahun Terakhir)</span>
+                    <span class="badge bg-danger text-white border-0">Bank Dunia</span>
+                </div>
+                <div class="card-body-custom">
+                    <canvas id="inflationChart" height="250"></canvas>
                 </div>
             </div>
         </div>
@@ -415,6 +475,104 @@
                     }
                 }
             });
+
+            // Setup Chart.js Risk Trend
+            const riskLabels = {!! json_encode($assessment['risk_trend']['labels'] ?? []) !!};
+            const riskData = {!! json_encode($assessment['risk_trend']['data'] ?? []) !!};
+            
+            // Append Prediction to chart
+            riskLabels.push('Prediksi Besok');
+            riskData.push({{ $assessment['prediction']['predicted_score'] ?? 0 }});
+            
+            new Chart(document.getElementById('riskChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: riskLabels,
+                        datasets: [{
+                            label: 'Total Risk Score',
+                            data: riskData,
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#fbbf24',
+                            pointBorderColor: '#ffffff',
+                            pointRadius: 4,
+                            segment: {
+                                borderDash: ctx => ctx.p0DataIndex >= (riskData.length - 2) ? [6, 6] : undefined,
+                                borderColor: ctx => ctx.p0DataIndex >= (riskData.length - 2) ? '#fbbf24' : undefined,
+                            }
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { min: 0, max: 100, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                            x: { grid: { display: false }, ticks: { color: '#94a3b8', maxRotation: 45, minRotation: 45 } }
+                        }
+                    }
+                });
+
+            // Setup Chart.js GDP Trend
+            const gdpLabels = {!! json_encode($economy['gdp_trend']['labels'] ?? []) !!};
+            const gdpData = {!! json_encode($economy['gdp_trend']['data'] ?? []) !!};
+            
+            new Chart(document.getElementById('gdpChart').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: gdpLabels,
+                        datasets: [{
+                            label: 'GDP (USD)',
+                            data: gdpData,
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                        }
+                    }
+                });
+
+            // Setup Chart.js Inflation Trend
+            const inflationLabels = {!! json_encode($economy['inflation_trend']['labels'] ?? []) !!};
+            const inflationData = {!! json_encode($economy['inflation_trend']['data'] ?? []) !!};
+            
+            new Chart(document.getElementById('inflationChart').getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: inflationLabels,
+                        datasets: [{
+                            label: 'Inflation (%)',
+                            data: inflationData,
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#f87171',
+                            pointBorderColor: '#ffffff',
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                        }
+                    }
+                });
         });
     </script>
 @endsection

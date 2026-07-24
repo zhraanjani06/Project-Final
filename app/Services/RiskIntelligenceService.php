@@ -52,12 +52,16 @@ class RiskIntelligenceService
 
         // 2. Get Weather Data (Cache: 1 hour)
         $weather = Cache::remember("country_weather_{$code}", now()->addHours(1), function () use ($country) {
-            return $this->openMeteo->getWeatherData($country->latitude, $country->longitude);
+            $data = $this->openMeteo->getWeatherData($country->latitude, $country->longitude);
+            $data['last_update'] = now()->format('d M Y H:i');
+            return $data;
         });
 
         // 3. Get Economic Data (Cache: 7 days)
         $economy = Cache::remember("country_economy_{$code}", now()->addDays(7), function () use ($code) {
-            return $this->worldBank->getEconomicData($code);
+            $data = $this->worldBank->getEconomicData($code);
+            if (is_array($data)) $data['last_update'] = now()->format('d M Y H:i');
+            return $data;
         });
 
         // 4. Get Currency Exchange Rate & Trend (Cache: 12 hours)
@@ -68,7 +72,8 @@ class RiskIntelligenceService
             return [
                 'rate_vs_usd' => $rate,
                 'trend' => $trend,
-                'source' => 'ExchangeRate API'
+                'source' => 'ExchangeRate API',
+                'last_update' => now()->format('d M Y H:i')
             ];
         });
 
@@ -92,6 +97,9 @@ class RiskIntelligenceService
             ->orderBy('published_at', 'desc')
             ->get();
 
+        $latestNews = $dbArticles->first();
+        $newsLastUpdate = $latestNews ? $latestNews->created_at->format('d M Y H:i') : now()->format('d M Y H:i');
+
         $newsData = [
             'articles' => $dbArticles,
             'positive_count' => $dbArticles->where('sentiment', 'Positive')->count(),
@@ -100,11 +108,34 @@ class RiskIntelligenceService
             'total_count' => $dbArticles->count(),
             'news_risk_score' => $dbArticles->count() > 0 
                 ? ($dbArticles->where('sentiment', 'Negative')->count() / $dbArticles->count()) * 100 
-                : 0.0
+                : 0.0,
+            'last_update' => $newsLastUpdate
         ];
 
         // 6. Calculate Risk Scores
         $riskData = $this->calculateWeightedRisk($code, $weather, $economy, $currency, $newsData);
+
+        // Fetch historical risk scores for trend chart
+        $historicalRisks = \App\Models\RiskScore::where('country_code', $code)
+            ->orderBy('calculated_at', 'desc')
+            ->take(10)
+            ->get()
+            ->reverse()
+            ->values();
+            
+        $riskTrend = [
+            'labels' => $historicalRisks->pluck('calculated_at')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M H:i'))->toArray(),
+            'data' => $historicalRisks->pluck('total_score')->toArray()
+        ];
+        
+        // If there is only 1 point, let's duplicate it slightly so a line can be drawn in Chart.js
+        if (count($riskTrend['data']) === 1) {
+            $riskTrend['labels'][] = 'Now';
+            $riskTrend['data'][] = $riskTrend['data'][0];
+        }
+
+        // Calculate Risk Prediction for the future
+        $prediction = $this->predictFutureRisk($historicalRisks->pluck('total_score')->toArray());
 
         return [
             'country' => $country,
@@ -113,7 +144,9 @@ class RiskIntelligenceService
             'economy' => $economy,
             'currency' => $currency,
             'news' => $newsData,
-            'risk' => $riskData
+            'risk' => $riskData,
+            'risk_trend' => $riskTrend,
+            'prediction' => $prediction
         ];
     }
 
@@ -263,4 +296,59 @@ class RiskIntelligenceService
             'db_record' => $dbScore
         ];
     }
+
+    /**
+     * Calculate a simple risk prediction (forecast) based on historical momentum/average rate of change.
+     */
+    protected function predictFutureRisk(array $scores): array
+    {
+        $count = count($scores);
+        
+        // Default stable prediction if not enough data
+        if ($count < 2) {
+            return [
+                'predicted_score' => $scores[0] ?? 0.0,
+                'trend_label' => 'Stabil',
+                'icon' => 'fa-minus',
+                'color' => 'text-secondary'
+            ];
+        }
+
+        $last = $scores[$count - 1];
+        
+        // Calculate average rate of change over the available points
+        $totalChange = 0;
+        for ($i = 1; $i < $count; $i++) {
+            $totalChange += ($scores[$i] - $scores[$i - 1]);
+        }
+        $avgChange = $totalChange / ($count - 1);
+        
+        // Add momentum weight to recent changes
+        $recentChange = $scores[$count - 1] - $scores[$count - 2];
+        $weightedChange = ($avgChange * 0.4) + ($recentChange * 0.6);
+        
+        $predictedScore = min(100, max(0, $last + $weightedChange));
+        
+        $trend = 'Stabil';
+        $icon = 'fa-minus';
+        $color = 'text-warning';
+        
+        if ($weightedChange > 1.5) {
+            $trend = 'Memburuk (Naik)';
+            $icon = 'fa-arrow-trend-up';
+            $color = 'text-danger';
+        } elseif ($weightedChange < -1.5) {
+            $trend = 'Membaik (Turun)';
+            $icon = 'fa-arrow-trend-down';
+            $color = 'text-success';
+        }
+        
+        return [
+            'predicted_score' => round($predictedScore, 2),
+            'trend_label' => $trend,
+            'icon' => $icon,
+            'color' => $color
+        ];
+    }
 }
+

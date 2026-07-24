@@ -32,14 +32,20 @@
                         <p class="text-muted mb-0">Temukan lokasi pelabuhan dan pantau kondisi cuaca lokal secara langsung.</p>
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <div class="d-inline-block text-start" style="width: 280px;">
-                            <label class="form-label text-muted mb-1" style="font-size: 0.8rem;">Filter Berdasarkan Negara</label>
-                            <select id="country-filter" class="form-select bg-dark border-secondary text-white rounded-3">
-                                <option value="all">Tampilkan Semua Negara</option>
-                                @foreach($countries as $c)
-                                    <option value="{{ $c->code }}">{{ $c->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class="d-inline-flex flex-wrap gap-3 text-start w-100 justify-content-md-end">
+                            <div style="width: 250px;">
+                                <label class="form-label text-muted mb-1" style="font-size: 0.8rem;">Cari Pelabuhan</label>
+                                <input type="text" id="port-search" class="form-control bg-dark border-secondary text-white rounded-3" placeholder="Ketik nama pelabuhan...">
+                            </div>
+                            <div style="width: 250px;">
+                                <label class="form-label text-muted mb-1" style="font-size: 0.8rem;">Filter Berdasarkan Negara</label>
+                                <select id="country-filter" class="form-select bg-dark border-secondary text-white rounded-3">
+                                    <option value="all">Tampilkan Semua Negara</option>
+                                    @foreach($countries as $c)
+                                        <option value="{{ $c->code }}">{{ $c->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -78,6 +84,7 @@
             // Initialize Leaflet map
             const map = L.map('port-map').setView([10, 20], 2);
             let portMarkers = [];
+            let allLoadedPorts = [];
 
             // Add dark mode map tiles
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -91,14 +98,67 @@
 
             // Handle country filter change
             document.getElementById('country-filter').addEventListener('change', function (e) {
+                // Clear search input when changing country
+                document.getElementById('port-search').value = '';
                 loadPorts(e.target.value);
             });
 
-            function loadPorts(countryCode) {
+            // Handle port search
+            document.getElementById('port-search').addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                if (query === '') {
+                    renderMarkers(allLoadedPorts);
+                } else {
+                    const filtered = allLoadedPorts.filter(p => p.name.toLowerCase().includes(query));
+                    renderMarkers(filtered, true);
+                }
+            });
+
+            function renderMarkers(portsToRender, isSearch = false) {
                 // Clear existing markers
                 portMarkers.forEach(marker => map.removeLayer(marker));
                 portMarkers = [];
+                const bounds = [];
 
+                portsToRender.forEach(port => {
+                    const pos = [port.latitude, port.longitude];
+                    bounds.push(pos);
+
+                    const anchorIcon = L.divIcon({
+                        html: '<div class="text-primary fs-4"><i class="fa-solid fa-anchor"></i></div>',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12],
+                        className: 'custom-div-icon'
+                    });
+
+                    const marker = L.marker(pos, { icon: anchorIcon }).addTo(map);
+                    marker.bindTooltip(`<strong>${port.name}</strong>`);
+                    
+                    marker.on('click', function () {
+                        loadPortDetails(port);
+                    });
+
+                    // Store marker with port id so we can trigger click if needed
+                    marker.portId = port.id;
+                    portMarkers.push(marker);
+                });
+
+                // Fit map bounds if filter is set to single country or if searching
+                const countryCode = document.getElementById('country-filter').value;
+                if (bounds.length > 0) {
+                    if (isSearch) {
+                        if (portsToRender.length === 1) {
+                            map.flyTo(bounds[0], 10);
+                        } else {
+                            map.fitBounds(bounds, { maxZoom: 8, padding: [50, 50] });
+                        }
+                    } else if (countryCode !== 'all') {
+                        map.fitBounds(bounds, { maxZoom: 6, padding: [50, 50] });
+                    }
+                }
+            }
+
+            function loadPorts(countryCode) {
                 let url = '/api/ports';
                 if (countryCode !== 'all') {
                     url += `?country_code=${countryCode}`;
@@ -107,40 +167,8 @@
                 fetch(url)
                     .then(response => response.json())
                     .then(ports => {
-                        if (ports.length === 0) {
-                            return;
-                        }
-
-                        // Bounds array to fit map
-                        const bounds = [];
-
-                        ports.forEach(port => {
-                            // Define coordinates
-                            const pos = [port.latitude, port.longitude];
-                            bounds.push(pos);
-
-                            // Create blue anchor icon marker using FontAwesome markup
-                            const anchorIcon = L.divIcon({
-                                html: '<div class="text-primary fs-4"><i class="fa-solid fa-anchor"></i></div>',
-                                iconSize: [24, 24],
-                                iconAnchor: [12, 12],
-                                className: 'custom-div-icon'
-                            });
-
-                            const marker = L.marker(pos, { icon: anchorIcon }).addTo(map);
-                            marker.bindTooltip(`<strong>${port.name}</strong>`);
-                            
-                            marker.on('click', function () {
-                                loadPortDetails(port);
-                            });
-
-                            portMarkers.push(marker);
-                        });
-
-                        // Fit map bounds if filter is set to single country
-                        if (countryCode !== 'all' && bounds.length > 0) {
-                            map.fitBounds(bounds, { maxZoom: 6, padding: [50, 50] });
-                        }
+                        allLoadedPorts = ports;
+                        renderMarkers(ports);
                     });
             }
 
@@ -164,6 +192,9 @@
                         const wind = current.windspeed;
                         const code = current.weathercode;
                         const desc = getWmoDescription(code);
+                        
+                        const dateObj = new Date(current.time);
+                        const lastUpdate = dateObj.toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'}) + ' ' + dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
 
                         let weatherIcon = 'fa-sun text-warning';
                         if ([95, 96, 99].includes(code)) {
@@ -183,7 +214,7 @@
 
                             <h5 class="text-white fw-semibold mb-3 border-bottom pb-2" style="border-color: rgba(255,255,255,0.05) !important;">Cuaca Pelabuhan Saat Ini</h5>
                             
-                            <div class="d-flex align-items-center justify-content-around bg-black bg-opacity-25 rounded-4 p-3 mb-4 border border-white border-opacity-5">
+                            <div class="d-flex align-items-center justify-content-around bg-black bg-opacity-25 rounded-4 p-3 mb-4 border border-white border-opacity-5 position-relative">
                                 <div class="text-center">
                                     <i class="fa-solid ${weatherIcon} fa-3x mb-2"></i>
                                     <div class="small text-muted">${desc}</div>
@@ -191,6 +222,9 @@
                                 <div class="text-center">
                                     <div class="fs-1 fw-bold text-white">${temp}°C</div>
                                     <div class="small text-muted">Suhu Pelabuhan</div>
+                                </div>
+                                <div class="position-absolute" style="bottom: 8px; right: 12px;">
+                                    <small class="text-muted" style="font-size: 0.65rem;"><i class="fa-regular fa-clock me-1"></i>${lastUpdate}</small>
                                 </div>
                             </div>
 

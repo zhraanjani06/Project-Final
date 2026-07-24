@@ -69,64 +69,68 @@
                 </div>
                 <div class="card-body-custom">
                     <div class="table-responsive">
-                        <table class="table table-dark table-striped align-middle mb-0" style="font-size: 0.9rem;">
+                        <table class="table table-borderless align-middle mb-0" style="font-size: 0.95rem; --bs-table-bg: transparent; --bs-table-color: #f8f9fa;">
                             <thead>
-                                <tr class="text-muted" style="border-bottom: 1px solid var(--border-color);">
-                                    <th>INDIKATOR</th>
-                                    <th><span class="fi fi-{{ strtolower($countryA) }} me-1" style="border-radius: 2px;"></span> {{ $dataA['profile']['name'] }}</th>
-                                    <th><span class="fi fi-{{ strtolower($countryB) }} me-1" style="border-radius: 2px;"></span> {{ $dataB['profile']['name'] }}</th>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                                    <th class="text-uppercase text-muted tracking-wider fw-bold py-3">INDIKATOR</th>
+                                    <th class="py-3"><span class="fi fi-{{ strtolower($countryA) }} me-2" style="border-radius: 3px;"></span> {{ $dataA['profile']['name'] }}</th>
+                                    <th class="py-3"><span class="fi fi-{{ strtolower($countryB) }} me-2" style="border-radius: 3px;"></span> {{ $dataB['profile']['name'] }}</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-muted">Mata Uang</td>
-                                    <td class="fw-semibold">{{ $dataA['profile']['currency_code'] }}</td>
-                                    <td class="fw-semibold">{{ $dataB['profile']['currency_code'] }}</td>
+                            <tbody style="border-top: none;">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td class="text-muted py-3"><i class="fa-solid fa-money-bill-wave me-2 opacity-50"></i>Mata Uang</td>
+                                    <td class="fw-semibold py-3">{{ $dataA['profile']['currency_code'] }}</td>
+                                    <td class="fw-semibold py-3">{{ $dataB['profile']['currency_code'] }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted">Populasi</td>
-                                    <td>{{ number_format($dataA['profile']['population']) }}</td>
-                                    <td>{{ number_format($dataB['profile']['population']) }}</td>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td class="text-muted py-3"><i class="fa-solid fa-users me-2 opacity-50"></i>Populasi</td>
+                                    <td class="py-3">{{ number_format($dataA['profile']['population']) }}</td>
+                                    <td class="py-3">{{ number_format($dataB['profile']['population']) }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted">GDP (Bank Dunia)</td>
-                                    <td>${{ number_format($dataA['economy']['gdp'] / 1e9, 2) }} Milyar</td>
-                                    <td>${{ number_format($dataB['economy']['gdp'] / 1e9, 2) }} Milyar</td>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td class="text-muted py-3"><i class="fa-solid fa-building-columns me-2 opacity-50"></i>GDP (Bank Dunia)</td>
+                                    <td class="py-3">{{ \App\Helpers\FormatHelper::gdp($dataA['economy']['gdp']) }}</td>
+                                    <td class="py-3">{{ \App\Helpers\FormatHelper::gdp($dataB['economy']['gdp']) }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted">Tingkat Inflasi</td>
-                                    <td>{{ $dataA['economy']['inflation'] }}%</td>
-                                    <td>{{ $dataB['economy']['inflation'] }}%</td>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td class="text-muted py-3"><i class="fa-solid fa-arrow-trend-up me-2 opacity-50"></i>Tingkat Inflasi</td>
+                                    <td class="py-3">{{ \App\Helpers\FormatHelper::percentage($dataA['economy']['inflation']) }}</td>
+                                    <td class="py-3">{{ \App\Helpers\FormatHelper::percentage($dataB['economy']['inflation']) }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted">Suhu & Cuaca</td>
-                                    <td>{{ $dataA['weather']['temperature'] }}°C ({{ $dataA['weather']['description'] }})</td>
-                                    <td>{{ $dataB['weather']['temperature'] }}°C ({{ $dataB['weather']['description'] }})</td>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td class="text-muted py-3"><i class="fa-solid fa-cloud-sun me-2 opacity-50"></i>Suhu & Cuaca</td>
+                                    <td class="py-3">{{ $dataA['weather']['temperature'] }}°C <span class="text-muted small">({{ $dataA['weather']['description'] }})</span></td>
+                                    <td class="py-3">{{ $dataB['weather']['temperature'] }}°C <span class="text-muted small">({{ $dataB['weather']['description'] }})</span></td>
                                 </tr>
-                                <tr class="border-top" style="border-color: rgba(255,255,255,0.08) !important;">
-                                    <td class="text-muted fw-bold">Skor Risiko Cuaca (30%)</td>
-                                    <td class="fw-bold text-light">{{ $dataA['risk']['weather_score'] }}</td>
-                                    <td class="fw-bold text-light">{{ $dataB['risk']['weather_score'] }}</td>
+                                
+                                <!-- Risk Scores Section -->
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02);">
+                                    <td class="text-light fw-bold py-3"><i class="fa-solid fa-cloud-sun text-warning me-2"></i>Skor Risiko Cuaca (30%)</td>
+                                    <td class="fw-bold text-white py-3">{{ \App\Helpers\FormatHelper::decimal($dataA['risk']['weather_score']) }}</td>
+                                    <td class="fw-bold text-white py-3">{{ \App\Helpers\FormatHelper::decimal($dataB['risk']['weather_score']) }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted fw-bold">Skor Risiko Ekonomi (20%)</td>
-                                    <td class="fw-bold text-light">{{ $dataA['risk']['economic_score'] }}</td>
-                                    <td class="fw-bold text-light">{{ $dataB['risk']['economic_score'] }}</td>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02);">
+                                    <td class="text-light fw-bold py-3"><i class="fa-solid fa-sack-dollar text-warning me-2"></i>Skor Risiko Ekonomi (20%)</td>
+                                    <td class="fw-bold text-white py-3">{{ \App\Helpers\FormatHelper::decimal($dataA['risk']['economic_score']) }}</td>
+                                    <td class="fw-bold text-white py-3">{{ \App\Helpers\FormatHelper::decimal($dataB['risk']['economic_score']) }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted fw-bold">Skor Risiko Sentimen (40%)</td>
-                                    <td class="fw-bold text-light">{{ $dataA['risk']['news_score'] }}</td>
-                                    <td class="fw-bold text-light">{{ $dataB['risk']['news_score'] }}</td>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02);">
+                                    <td class="text-light fw-bold py-3"><i class="fa-solid fa-newspaper text-warning me-2"></i>Skor Risiko Sentimen (40%)</td>
+                                    <td class="fw-bold text-white py-3">{{ \App\Helpers\FormatHelper::decimal($dataA['risk']['news_score']) }}</td>
+                                    <td class="fw-bold text-white py-3">{{ \App\Helpers\FormatHelper::decimal($dataB['risk']['news_score']) }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted fw-bold">Skor Risiko Valuta (10%)</td>
-                                    <td class="fw-bold text-light">{{ $dataA['risk']['currency_score'] }}</td>
-                                    <td class="fw-bold text-light">{{ $dataB['risk']['currency_score'] }}</td>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02);">
+                                    <td class="text-light fw-bold py-3"><i class="fa-solid fa-chart-line text-warning me-2"></i>Skor Risiko Valuta (10%)</td>
+                                    <td class="fw-bold text-white py-3">{{ \App\Helpers\FormatHelper::decimal($dataA['risk']['currency_score']) }}</td>
+                                    <td class="fw-bold text-white py-3">{{ \App\Helpers\FormatHelper::decimal($dataB['risk']['currency_score']) }}</td>
                                 </tr>
-                                <tr style="background: rgba(236, 72, 153, 0.15) !important; border-top: 2px solid var(--primary-accent) !important;">
-                                    <td class="fw-bold" style="color: #fdf4ff !important;">TOTAL SKOR RISIKO</td>
-                                    <td class="fw-bold text-white fs-5">{{ $dataA['risk']['total_score'] }} / 100</td>
-                                    <td class="fw-bold text-white fs-5">{{ $dataB['risk']['total_score'] }} / 100</td>
+                                
+                                <!-- Total Score -->
+                                <tr style="background: linear-gradient(90deg, rgba(236,72,153,0.15) 0%, rgba(139,92,246,0.15) 100%); border-top: 2px solid var(--primary-accent);">
+                                    <td class="fw-bold py-4 text-uppercase tracking-wider" style="color: #fdf4ff;">TOTAL SKOR RISIKO</td>
+                                    <td class="fw-extrabold text-white fs-4 py-4">{{ \App\Helpers\FormatHelper::decimal($dataA['risk']['total_score']) }} <span class="fs-6 text-white-50 fw-normal">/ 100</span></td>
+                                    <td class="fw-extrabold text-white fs-4 py-4">{{ \App\Helpers\FormatHelper::decimal($dataB['risk']['total_score']) }} <span class="fs-6 text-white-50 fw-normal">/ 100</span></td>
                                 </tr>
                             </tbody>
                         </table>
